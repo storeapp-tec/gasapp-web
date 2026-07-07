@@ -23,18 +23,26 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* ===== ELIMINAR CUALQUIER PUNTO NEGRO ===== */
-        .app,
-        .header-mini,
-        .header-top,
-        .header-left,
-        .header-right,
-        .odometer-row,
-        .tab-content,
-        .nav-item,
-        .fab-mini,
-        .modal-box {
-            /* No agregar ningún contenido extra */
+        /* ===== ELIMINAR EL PUNTO NEGRO (CURSOR) ===== */
+        /* El cursor solo se ve cuando el input está enfocado */
+        input:not(:focus) {
+            caret-color: transparent !important;
+        }
+
+        /* También para inputs de tipo number */
+        input[type="number"]:not(:focus) {
+            caret-color: transparent !important;
+        }
+
+        /* Eliminar spinners de inputs number */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: none;
         }
 
         body {
@@ -161,7 +169,7 @@
             opacity: 0.7;
         }
 
-        /* ===== INPUT SIN CURSOR NEGRO ===== */
+        /* ===== INPUTS ===== */
         .modal-input {
             width: 100%;
             padding: 12px;
@@ -172,12 +180,31 @@
             margin-bottom: 16px;
             background: white;
             color: #1a1a2e;
-            caret-color: #667eea;
         }
 
         .modal-input:focus {
             border-color: #667eea;
             outline: none;
+            caret-color: #667eea;
+        }
+
+        .field-group input,
+        .field-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fafafa;
+            transition: border-color 0.2s;
+        }
+
+        .field-group input:focus,
+        .field-group select:focus {
+            border-color: #667eea;
+            outline: none;
+            background: white;
+            caret-color: #667eea;
         }
 
         /* ===== CONTENIDO ===== */
@@ -426,6 +453,7 @@
             font-size: 13px;
             color: #666;
             margin-top: 2px;
+            justify-content: center;
         }
 
         .history-consumption-badge {
@@ -648,7 +676,6 @@
             font-size: 14px;
             background: #fafafa;
             transition: border-color 0.2s;
-            caret-color: #667eea;
         }
 
         .field-group input:focus,
@@ -838,7 +865,6 @@
                 </div>
                 <div class="header-right">⛽ GasApp</div>
             </div>
-            <!-- Odómetro - SOLO EN INICIO -->
             <div class="odometer-row" id="odometerRow">
                 <span class="odo-label">Odómetro</span>
                 <span class="odo-value clickable" id="currentOdometer">0</span>
@@ -848,7 +874,7 @@
 
         <!-- ===== CONTENIDO ===== -->
 
-        <!-- PESTAÑA: INICIO -->
+        <!-- INICIO -->
         <div id="tabInicio" class="tab-content active">
             <div class="service-alert-mini" id="serviceAlert" style="display:none;">
                 <span class="alert-icon">🔧</span>
@@ -863,7 +889,7 @@
             </div>
         </div>
 
-        <!-- PESTAÑA: HISTORIAL -->
+        <!-- HISTORIAL -->
         <div id="tabHistorial" class="tab-content">
             <div class="summary-row">
                 <div class="summary-item">
@@ -891,7 +917,7 @@
             </div>
         </div>
 
-        <!-- PESTAÑA: SERVICIOS -->
+        <!-- SERVICIOS -->
         <div id="tabServicios" class="tab-content">
             <div id="servicesList" class="service-list-compact">
                 <div class="empty-state-mini">No hay servicios registrados</div>

@@ -106,50 +106,55 @@
 
         /* ===== BOTÓN 3 PUNTOS ===== */
         .btn-menu {
-            background: transparent;
-            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
             font-size: 20px;
             font-weight: 700;
             cursor: pointer;
-            padding: 0 4px;
+            padding: 0;
             line-height: 1;
-            width: 30px;
-            height: 30px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.15s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-menu:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .btn-menu:active {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0.92);
         }
 
         /* ===== MENÚ DESPLEGABLE ===== */
         .menu-dropdown {
             position: absolute;
-            top: 100%;
-            right: 16px;
+            top: calc(100% + 8px);
+            right: 12px;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 14px;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
             padding: 6px 0;
-            min-width: 180px;
+            min-width: 190px;
             z-index: 200;
-            margin-top: 4px;
             display: none;
             overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .menu-dropdown .menu-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            font-size: 13px;
+            gap: 12px;
+            padding: 12px 18px;
+            font-size: 14px;
             color: #333;
             cursor: pointer;
             transition: background 0.15s;
@@ -157,6 +162,7 @@
             background: none;
             width: 100%;
             text-align: left;
+            font-weight: 500;
         }
 
         .menu-dropdown .menu-item:hover {
@@ -168,7 +174,7 @@
         }
 
         .menu-dropdown .menu-item span:first-child {
-            font-size: 16px;
+            font-size: 18px;
         }
 
         /* ===== INICIO HEADER ===== */
@@ -693,8 +699,8 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .modal-box h2 {
-            font-size: 18px;
+        .modal-box h1 {
+            font-size: 20px;
             margin-bottom: 16px;
             color: #1a1a2e;
             text-align: center;
@@ -933,8 +939,8 @@
             }
             .btn-menu {
                 font-size: 18px;
-                width: 26px;
-                height: 26px;
+                width: 30px;
+                height: 30px;
             }
             .menu-dropdown {
                 min-width: 150px;
@@ -957,7 +963,7 @@
                 </div>
                 <div class="header-right">
                     <span class="page-title" id="headerTitle">Inicio</span>
-                    <button class="btn-menu" id="menuBtn">⋮</button>
+                    <button type="button" class="btn-menu" id="menuBtn" onclick="toggleMenu(event)">⋮</button>
                 </div>
             </div>
         </header>
@@ -1057,7 +1063,8 @@
         <!-- MODAL NOMBRE -->
         <div class="modal-overlay" id="nombreModal">
             <div class="modal-box">
-                <h2>✏️ Editar nombre del auto</h2>
+                <button class="modal-close" id="nombreModalClose">✕</button>
+                <h1>✏️ Editar nombre del auto</h1>
                 <input type="text" id="nombreInput" class="modal-input" placeholder="Ej: Nissan March" value="Mi Auto">
                 <div class="modal-actions">
                     <button class="btn-modal-cancel" id="nombreCancel">Cancelar</button>
@@ -1069,7 +1076,8 @@
         <!-- MODAL ODÓMETRO -->
         <div class="modal-overlay" id="odoModal">
             <div class="modal-box">
-                <h2>Editar odómetro</h2>
+                <button class="modal-close" id="odoModalClose">✕</button>
+                <h1>Editar odómetro</h1>
                 <input type="number" id="odoInput" class="modal-input" placeholder="Kilometraje actual">
                 <div class="modal-actions">
                     <button class="btn-modal-cancel" id="odoCancel">Cancelar</button>
@@ -1082,7 +1090,7 @@
         <div class="modal-overlay" id="fuelModal">
             <div class="modal-box">
                 <button class="modal-close" id="fuelModalClose">✕</button>
-                <h2 id="fuelModalTitle">⛽ Nueva carga</h2>
+                <h1 id="fuelModalTitle">⛽ Nueva carga</h1>
                 <input type="hidden" id="editFuelId">
                 <form id="fuelForm">
                     <div class="field-group">
@@ -1121,7 +1129,7 @@
         <div class="modal-overlay" id="serviceModal">
             <div class="modal-box">
                 <button class="modal-close" id="serviceModalClose">✕</button>
-                <h2 id="serviceModalTitle">🔧 Nuevo servicio</h2>
+                <h1 id="serviceModalTitle">🔧 Nuevo servicio</h1>
                 <input type="hidden" id="editServiceId">
                 <form id="serviceForm">
                     <div class="field-group">
@@ -1157,6 +1165,34 @@
     </div>
 
     <script>
+        // ================================================================
+        // MENÚ ADMIN - CORREGIDO Y FUNCIONAL
+        // ================================================================
+
+        // Función global para abrir/cerrar el menú (se llama desde el HTML)
+        window.toggleMenu = function(event) {
+            if (event) event.stopPropagation();
+            var menu = document.getElementById('adminMenu');
+            if (!menu) return;
+
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+            }
+        };
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            var menu = document.getElementById('adminMenu');
+            var btn = document.getElementById('menuBtn');
+            if (menu && btn) {
+                if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                    menu.style.display = 'none';
+                }
+            }
+        });
+
         // ================================================================
         // UTILS
         // ================================================================
@@ -1250,35 +1286,9 @@
         }
 
         // ================================================================
-        // MENÚ ADMIN - FUNCIONA CON ONCLICK EN EL BOTÓN
-        // ================================================================
-
-        // Esta función se ejecuta desde el HTML con onclick en el botón
-        function toggleMenu() {
-            var menu = document.getElementById('adminMenu');
-            if (menu.style.display === 'block') {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'block';
-            }
-        }
-
-        // Cerrar menú al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            var menu = document.getElementById('adminMenu');
-            var btn = document.getElementById('menuBtn');
-            if (menu && btn) {
-                if (!btn.contains(e.target) && !menu.contains(e.target)) {
-                    menu.style.display = 'none';
-                }
-            }
-        });
-
-        // ================================================================
         // BACKUP AUTOMÁTICO Y RESTAURACIÓN
         // ================================================================
 
-        // --- BACKUP AUTOMÁTICO ---
         function generarBackupAutomatico() {
             try {
                 const promesaFuels = getAllFuels();
@@ -1316,8 +1326,12 @@
             }
         }
 
-        // --- IMPORTAR BACKUP ---
-        function importarBackup() {
+        // Función global para importar backup
+        window.importarBackup = function() {
+            // Cerrar menú
+            var menu = document.getElementById('adminMenu');
+            if (menu) menu.style.display = 'none';
+
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.json';
@@ -1336,19 +1350,16 @@
 
                     if (!confirm('¿Restaurar backup? Se perderán los datos actuales.')) return;
 
-                    // Limpiar datos actuales
                     const fuels = await getAllFuels();
                     const services = await getAllServices();
                     for (const f of fuels) await deleteFuel(f.id);
                     for (const s of services) await deleteService(s.id);
                     localStorage.clear();
 
-                    // Restaurar configuración
                     if (datos.carName) saveCarName(datos.carName);
                     if (datos.initialKm) saveInitialKm(datos.initialKm);
                     if (datos.lastPrice) saveLastPrice(datos.lastPrice);
 
-                    // Restaurar datos
                     for (const fuel of datos.fuels) {
                         await addFuel(fuel);
                     }
@@ -1357,8 +1368,6 @@
                     }
 
                     showToast('✅ Backup restaurado correctamente', 'success');
-                    // Cerrar menú
-                    document.getElementById('adminMenu').style.display = 'none';
                     location.reload();
 
                 } catch (error) {
@@ -1367,7 +1376,7 @@
                 }
             };
             input.click();
-        }
+        };
 
         // ================================================================
         // INDEXEDDB
@@ -1635,6 +1644,11 @@
             }, 100);
         }
 
+        // Botón cerrar modal nombre
+        document.getElementById('nombreModalClose').addEventListener('click', function() {
+            document.getElementById('nombreModal').classList.remove('active');
+        });
+
         document.getElementById('nombreCancel').addEventListener('click', () => {
             document.getElementById('nombreModal').classList.remove('active');
         });
@@ -1666,7 +1680,6 @@
         // ================================================================
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Resto del código de inicialización
             const carName = getCarName();
             const carNameSpan = document.querySelector('.car-name');
             if (carNameSpan) {
@@ -1682,6 +1695,15 @@
 
             switchTab('tabInicio');
 
+            // Cerrar modales con Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                        modal.classList.remove('active');
+                    });
+                }
+            });
+
             document.getElementById('currentOdometer').addEventListener('click', () => {
                 const current = document.getElementById('currentOdometer').textContent.replace(/,/g, '');
                 document.getElementById('odoInput').value = current;
@@ -1690,6 +1712,11 @@
                     document.getElementById('odoInput').focus();
                     document.getElementById('odoInput').select();
                 }, 100);
+            });
+
+            // Botón cerrar modal odómetro
+            document.getElementById('odoModalClose').addEventListener('click', function() {
+                document.getElementById('odoModal').classList.remove('active');
             });
 
             document.getElementById('odoCancel').addEventListener('click', () => {
@@ -1710,21 +1737,13 @@
                 await updateDashboard();
             });
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    document.getElementById('nombreModal').classList.remove('active');
-                    document.getElementById('odoModal').classList.remove('active');
-                    document.getElementById('fuelModal').classList.remove('active');
-                    document.getElementById('serviceModal').classList.remove('active');
-                }
-            });
-
             document.getElementById('odoModal').addEventListener('click', (e) => {
                 if (e.target === document.getElementById('odoModal')) {
                     document.getElementById('odoModal').classList.remove('active');
                 }
             });
 
+            // Fuel Modal
             document.getElementById('fuelModalClose').addEventListener('click', () => {
                 document.getElementById('fuelModal').classList.remove('active');
             });
@@ -1734,6 +1753,7 @@
                 }
             });
 
+            // Service Modal
             document.getElementById('serviceModalClose').addEventListener('click', () => {
                 document.getElementById('serviceModal').classList.remove('active');
             });
@@ -1953,7 +1973,6 @@
                 await populateMonthSelector();
                 await updateHistory();
 
-                // Backup automático
                 generarBackupAutomatico();
 
             } catch (error) {
@@ -2081,7 +2100,6 @@
                 await loadServices();
                 await updateDashboard();
 
-                // Backup automático
                 generarBackupAutomatico();
 
             } catch (error) {

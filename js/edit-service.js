@@ -1,7 +1,6 @@
 let serviceId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Obtener ID de la URL
     const params = new URLSearchParams(window.location.search);
     serviceId = parseInt(params.get('id'));
     
@@ -11,14 +10,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
     
-    // Cargar datos del servicio
     await loadServiceData(serviceId);
 });
 
 async function loadServiceData(id) {
     try {
-        const allServices = await getAllServices();
-        const service = allServices.find(s => s.id === id);
+        const service = await getServiceById(id);
         
         if (!service) {
             showToast('❌ Servicio no encontrado', 'error');
@@ -26,7 +23,6 @@ async function loadServiceData(id) {
             return;
         }
         
-        // Llenar formulario
         document.getElementById('editServiceId').value = service.id;
         document.getElementById('editServiceDate').value = service.date;
         document.getElementById('editServiceType').value = service.type;
@@ -40,7 +36,6 @@ async function loadServiceData(id) {
     }
 }
 
-// Actualizar servicio
 document.getElementById('editServiceForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -71,7 +66,6 @@ document.getElementById('editServiceForm').addEventListener('submit', async (e) 
     }
 });
 
-// Eliminar servicio
 document.getElementById('deleteServiceBtn').addEventListener('click', async () => {
     if (!confirm('¿Eliminar este servicio permanentemente?')) return;
     

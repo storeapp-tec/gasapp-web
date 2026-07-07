@@ -1,23 +1,28 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // Fecha actual
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('fuelDate').value = today;
     
-    // Precargar odómetro con el último valor
     const lastFuel = await getLastFuel();
+    const initialKm = getInitialKm();
+    
     if (lastFuel) {
         document.getElementById('fuelOdometer').placeholder = `Último: ${formatNumber(lastFuel.odometer)} km`;
         document.getElementById('fuelOdometer').value = lastFuel.odometer;
+        document.getElementById('odoHint').textContent = `Último registro: ${formatNumber(lastFuel.odometer)} km`;
+    } else if (initialKm) {
+        document.getElementById('fuelOdometer').placeholder = `Km inicial: ${formatNumber(initialKm)} km`;
+        document.getElementById('fuelOdometer').value = initialKm;
+        document.getElementById('odoHint').textContent = `Km inicial configurado: ${formatNumber(initialKm)} km`;
+    } else {
+        document.getElementById('odoHint').textContent = '💡 Este será el kilometraje inicial de tu auto';
     }
     
-    // Mostrar último precio
     const lastPrice = getLastPrice();
     if (lastPrice) {
         document.getElementById('lastPriceHint').textContent = `Último precio: $${parseFloat(lastPrice).toFixed(2)}`;
         document.getElementById('fuelPrice').value = lastPrice;
     }
     
-    // Calcular costo total en tiempo real
     document.getElementById('fuelLiters').addEventListener('input', calculateTotal);
     document.getElementById('fuelPrice').addEventListener('input', calculateTotal);
     
@@ -29,7 +34,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Enviar formulario
 document.getElementById('fuelForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -38,7 +42,6 @@ document.getElementById('fuelForm').addEventListener('submit', async (e) => {
     const liters = parseFloat(document.getElementById('fuelLiters').value);
     const price = parseFloat(document.getElementById('fuelPrice').value);
     
-    // Validaciones
     if (!date || !odometer || !liters || !price) {
         showToast('❌ Todos los campos son obligatorios', 'error');
         return;
@@ -49,11 +52,16 @@ document.getElementById('fuelForm').addEventListener('submit', async (e) => {
         return;
     }
     
-    // Verificar que el odómetro sea mayor al último
     const lastFuel = await getLastFuel();
     if (lastFuel && odometer <= lastFuel.odometer) {
         showToast(`❌ El odómetro debe ser mayor a ${formatNumber(lastFuel.odometer)} km`, 'error');
         return;
+    }
+    
+    // Si es la primera vez, guardar km inicial
+    const initialKm = getInitialKm();
+    if (!initialKm && !lastFuel) {
+        saveInitialKm(odometer);
     }
     
     const totalCost = liters * price;
@@ -71,7 +79,6 @@ document.getElementById('fuelForm').addEventListener('submit', async (e) => {
         saveLastPrice(price);
         showToast('✅ Carga guardada exitosamente', 'success');
         
-        // Redirigir al dashboard
         setTimeout(() => {
             location.href = 'index.html';
         }, 1500);

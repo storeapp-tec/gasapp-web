@@ -3,46 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nueva carga - GasApp</title>
+    <title>Nueva carga</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <div class="container">
-        <header class="modal-header">
-            <button class="close-btn" onclick="location.href='index.html'">✕</button>
-            <h2>⛽ Nueva carga</h2>
+    <div class="app">
+        <header class="header-modal">
+            <button class="btn-back" onclick="location.href='index.html'">‹</button>
+            <span class="modal-title">Nueva carga</span>
+            <span></span>
         </header>
 
-        <form id="fuelForm" class="form-card">
-            <div class="form-group">
-                <label>📅 Fecha</label>
+        <form id="fuelForm" class="form-compact">
+            <div class="field-group">
+                <label>Fecha</label>
                 <input type="date" id="fuelDate" required>
             </div>
 
-            <div class="form-group">
-                <label>📟 Odómetro (km)</label>
+            <div class="field-group">
+                <label>Odómetro (km)</label>
                 <input type="number" id="fuelOdometer" placeholder="Ej: 179652" required step="1">
-                <small class="hint" id="odoHint">Ingresa el kilometraje actual</small>
+                <small class="hint" id="odoHint">Último: --</small>
             </div>
 
-            <div class="form-group">
-                <label>⛽ Litros cargados</label>
-                <input type="number" id="fuelLiters" placeholder="Ej: 40.5" required step="0.01">
+            <div class="field-row">
+                <div class="field-group half">
+                    <label>Litros</label>
+                    <input type="number" id="fuelLiters" placeholder="40.5" required step="0.01">
+                </div>
+                <div class="field-group half">
+                    <label>Precio $/L</label>
+                    <input type="number" id="fuelPrice" placeholder="23.66" required step="0.01">
+                    <small class="hint" id="lastPriceHint">Último: $---</small>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>💰 Precio por litro ($)</label>
-                <input type="number" id="fuelPrice" placeholder="Ej: 23.66" required step="0.01">
-                <small class="hint" id="lastPriceHint">Último precio: $---</small>
+            <div class="total-box">
+                <span>Total</span>
+                <span class="total-amount" id="totalCost">$0.00</span>
             </div>
 
-            <div class="form-group total-cost">
-                <label>💵 Costo total</label>
-                <div class="total-amount" id="totalCost">$0.00</div>
-            </div>
-
-            <button type="submit" class="btn-primary">💾 Guardar carga</button>
+            <button type="submit" class="btn-primary-full">Guardar carga</button>
         </form>
     </div>
 

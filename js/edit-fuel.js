@@ -1,58 +1,89 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Editar carga</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="manifest" href="manifest.json">
-</head>
-<body>
-    <div class="app">
-        <header class="header-modal">
-            <button class="btn-back" onclick="location.href='index.html'">‹</button>
-            <span class="modal-title">Editar carga</span>
-            <span></span>
-        </header>
+let fuelId = null;
 
-        <form id="editFuelForm" class="form-compact">
-            <input type="hidden" id="editFuelId">
+document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+    fuelId = parseInt(params.get('id'));
+    
+    if (!fuelId) {
+        showToast('❌ Carga no encontrada', 'error');
+        setTimeout(() => location.href = 'index.html', 1500);
+        return;
+    }
+    
+    await loadFuelData(fuelId);
+    
+    document.getElementById('editFuelLiters').addEventListener('input', calculateTotal);
+    document.getElementById('editFuelPrice').addEventListener('input', calculateTotal);
+});
 
-            <div class="field-group">
-                <label>Fecha</label>
-                <input type="date" id="editFuelDate" required>
-            </div>
+async function loadFuelData(id) {
+    try {
+        const allFuels = await getAllFuels();
+        const fuel = allFuels.find(f => f.id === id);
+        
+        if (!fuel) {
+            showToast('❌ Carga no encontrada', 'error');
+            setTimeout(() => location.href = 'index.html', 1500);
+            return;
+        }
+        
+        document.getElementById('editFuelId').value = fuel.id;
+        document.getElementById('editFuelDate').value = fuel.date;
+        document.getElementById('editFuelOdometer').value = fuel.odometer;
+        document.getElementById('editFuelLiters').value = fuel.liters;
+        document.getElementById('editFuelPrice').value = fuel.pricePerLiter;
+        document.getElementById('editTotalCost').textContent = `$${fuel.totalCost.toFixed(2)}`;
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('❌ Error al cargar', 'error');
+    }
+}
 
-            <div class="field-group">
-                <label>Odómetro (km)</label>
-                <input type="number" id="editFuelOdometer" required step="1">
-            </div>
+function calculateTotal() {
+    const liters = parseFloat(document.getElementById('editFuelLiters').value) || 0;
+    const price = parseFloat(document.getElementById('editFuelPrice').value) || 0;
+    document.getElementById('editTotalCost').textContent = `$${(liters * price).toFixed(2)}`;
+}
 
-            <div class="field-row">
-                <div class="field-group half">
-                    <label>Litros</label>
-                    <input type="number" id="editFuelLiters" required step="0.01">
-                </div>
-                <div class="field-group half">
-                    <label>Precio $/L</label>
-                    <input type="number" id="editFuelPrice" required step="0.01">
-                </div>
-            </div>
+document.getElementById('editFuelForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const id = parseInt(document.getElementById('editFuelId').value);
+    const date = document.getElementById('editFuelDate').value;
+    const odometer = parseFloat(document.getElementById('editFuelOdometer').value);
+    const liters = parseFloat(document.getElementById('editFuelLiters').value);
+    const price = parseFloat(document.getElementById('editFuelPrice').value);
+    
+    if (!date || !odometer || !liters || !price) {
+        showToast('❌ Todos los campos son obligatorios', 'error');
+        return;
+    }
+    
+    if (odometer < 0 || liters <= 0 || price <= 0) {
+        showToast('❌ Valores inválidos', 'error');
+        return;
+    }
+    
+    try {
+        await updateFuel(id, { date, odometer, liters, pricePerLiter: price, totalCost: liters * price });
+        showToast('✅ Carga actualizada', 'success');
+        setTimeout(() => location.href = 'index.html', 1500);
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('❌ Error al actualizar', 'error');
+    }
+});
 
-            <div class="total-box">
-                <span>Total</span>
-                <span class="total-amount" id="editTotalCost">$0.00</span>
-            </div>
-
-            <div class="form-actions-row">
-                <button type="submit" class="btn-primary-full">Actualizar</button>
-                <button type="button" class="btn-danger-full" id="deleteFuelBtn">Eliminar</button>
-            </div>
-        </form>
-    </div>
-
-    <script src="js/utils.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/edit-fuel.js"></script>
-</body>
-</html>
+document.getElementById('deleteFuelBtn').addEventListener('click', async () => {
+    if (!confirm('¿Eliminar esta carga permanentemente?')) return;
+    
+    try {
+        await deleteFuel(parseInt(document.getElementById('editFuelId').value));
+        showToast('🗑️ Carga eliminada', 'success');
+        setTimeout(() => location.href = 'index.html', 1500);
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('❌ Error al eliminar', 'error');
+    }
+});

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Prueba - GasApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .test-section h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        /* ===== ESTILOS DEL HEADER (LOS MISMOS DE LA APP) ===== */
+        .header-mini {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 14px 18px 16px;
+            color: white;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .car-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .btn-edit-car {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            padding: 0 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            height: 22px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-right {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+
+        .odometer-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .odo-label {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .odo-value {
+            font-size: 32px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 2px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .odo-unit {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* ===== VARIANTES DEL BOTÓN LÁPIZ ===== */
+        .btn-edit-car-transparent {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            height: 22px;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-edit-car-transparent:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-edit-car-transparent:active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== ELIMINAR CUALQUIER PUNTO ===== */
+        *::before,
+        *::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .punto,
+        .punto-negro,
+        .dot,
+        .circle {
+            display: none !important;
+        }
+
+        /* ===== RESULTADO ===== */
+        .resultado {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .resultado.ok {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .resultado.error {
+            background: #fecaca;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h2 style="margin-bottom:16px;font-size:18px;">🔍 Prueba - Identificar punto negro</h2>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 1: SOLO FONDO MORADO -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 1: Solo fondo morado</h3>
+            <div class="header-mini">
+                <!-- Sin contenido -->
+            </div>
+            <div class="resultado ok">✅ Sin contenido - revisar si hay punto</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 2: NOMBRE + LÁPIZ CON FONDO (ACTUAL) -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 2: Nombre + lápiz CON fondo</h3>
+            <div class="header-mini">
+                <div class="header-top">
+                    <div class="header-left">
+                        <span class="car-name">Nissan March</span>
+                        <button class="btn-edit-car">✏️</button>
+                    </div>
+                    <div class="header-right">⛽ GasApp</div>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece aquí</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 3: NOMBRE + LÁPIZ TRANSPARENTE -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 3: Nombre + lápiz SIN fondo (transparente)</h3>
+            <div class="header-mini">
+                <div class="header-top">
+                    <div class="header-left">
+                        <span class="car-name">Nissan March</span>
+                        <button class="btn-edit-car-transparent">✏️</button>
+                    </div>
+                    <div class="header-right">⛽ GasApp</div>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece aquí</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 4: NOMBRE + LÁPIZ (SIN EL BOTÓN) -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 4: Nombre SIN lápiz</h3>
+            <div class="header-mini">
+                <div class="header-top">
+                    <div class="header-left">
+                        <span class="car-name">Nissan March</span>
+                    </div>
+                    <div class="header-right">⛽ GasApp</div>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece aquí</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 5: ODÓMETRO SOLO -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 5: Solo odómetro</h3>
+            <div class="header-mini">
+                <div class="odometer-row">
+                    <span class="odo-label">Odómetro</span>
+                    <span class="odo-value">176,098</span>
+                    <span class="odo-unit">km</span>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece aquí</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 6: HEADER COMPLETO -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 6: Header completo (actual)</h3>
+            <div class="header-mini">
+                <div class="header-top">
+                    <div class="header-left">
+                        <span class="car-name">Nissan March</span>
+                        <button class="btn-edit-car">✏️</button>
+                    </div>
+                    <div class="header-right">⛽ GasApp</div>
+                </div>
+                <div class="odometer-row">
+                    <span class="odo-label">Odómetro</span>
+                    <span class="odo-value">176,098</span>
+                    <span class="odo-unit">km</span>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece aquí</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 7: HEADER COMPLETO CON LÁPIZ TRANSPARENTE -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 7: Header completo con lápiz transparente</h3>
+            <div class="header-mini">
+                <div class="header-top">
+                    <div class="header-left">
+                        <span class="car-name">Nissan March</span>
+                        <button class="btn-edit-car-transparent">✏️</button>
+                    </div>
+                    <div class="header-right">⛽ GasApp</div>
+                </div>
+                <div class="odometer-row">
+                    <span class="odo-label">Odómetro</span>
+                    <span class="odo-value">176,098</span>
+                    <span class="odo-unit">km</span>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece aquí</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 8: HEADER COMPLETO SIN LÁPIZ -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 8: Header completo sin lápiz</h3>
+            <div class="header-mini">
+                <div class="header-top">
+                    <div class="header-left">
+                        <span class="car-name">Nissan March</span>
+                    </div>
+                    <div class="header-right">⛽ GasApp</div>
+                </div>
+                <div class="odometer-row">
+                    <span class="odo-label">Odómetro</span>
+                    <span class="odo-value">176,098</span>
+                    <span class="odo-unit">km</span>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece aquí</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 9: HEADER COMPLETO CON BORDE (para ver desbordes) -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 9: Header con borde rojo (para ver desbordes)</h3>
+            <div class="header-mini" style="border: 2px solid red; overflow: visible;">
+                <div class="header-top">
+                    <div class="header-left">
+                        <span class="car-name">Nissan March</span>
+                        <button class="btn-edit-car">✏️</button>
+                    </div>
+                    <div class="header-right">⛽ GasApp</div>
+                </div>
+                <div class="odometer-row">
+                    <span class="odo-label">Odómetro</span>
+                    <span class="odo-value">176,098</span>
+                    <span class="odo-unit">km</span>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece fuera del borde rojo</div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PRUEBA 10: HEADER COMPLETO CON BORDE Y OVERFLOW HIDDEN -->
+        <!-- ============================================================ -->
+        <div class="test-section">
+            <h3>Prueba 10: Header con borde rojo y overflow hidden</h3>
+            <div class="header-mini" style="border: 2px solid red; overflow: hidden;">
+                <div class="header-top">
+                    <div class="header-left">
+                        <span class="car-name">Nissan March</span>
+                        <button class="btn-edit-car">✏️</button>
+                    </div>
+                    <div class="header-right">⛽ GasApp</div>
+                </div>
+                <div class="odometer-row">
+                    <span class="odo-label">Odómetro</span>
+                    <span class="odo-value">176,098</span>
+                    <span class="odo-unit">km</span>
+                </div>
+            </div>
+            <div class="resultado ok">✅ Revisar si el punto aparece dentro del borde rojo</div>
+        </div>
+
+        <div style="text-align:center;padding:20px 0;color:#999;font-size:13px;">
+            📱 Abre esta página en tu celular y dime en qué prueba aparece el punto negro
+        </div>
+
+    </div>
+
+</body>
+</html>

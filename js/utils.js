@@ -18,7 +18,9 @@ function formatDateShort(dateStr) {
 function formatDateFull(dateStr) {
     if (!dateStr) return 'Fecha no disponible';
     const d = new Date(dateStr + 'T00:00:00');
-    return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][d.getMonth()];
+    return `${day} de ${month} ${d.getFullYear()}`;
 }
 
 // Calcular consumo km/l

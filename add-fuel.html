@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nueva carga - Fuelio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="container">
+        <header class="modal-header">
+            <button class="close-btn" onclick="location.href='index.html'">✕</button>
+            <h2>⛽ Nueva carga</h2>
+        </header>
+
+        <form id="fuelForm" class="form-card">
+            <div class="form-group">
+                <label>📅 Fecha</label>
+                <input type="date" id="fuelDate" required>
+            </div>
+
+            <div class="form-group">
+                <label>📟 Odómetro (km)</label>
+                <input type="number" id="fuelOdometer" placeholder="Ej: 179652" required step="1">
+            </div>
+
+            <div class="form-group">
+                <label>⛽ Litros cargados</label>
+                <input type="number" id="fuelLiters" placeholder="Ej: 40.5" required step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label>💰 Precio por litro ($)</label>
+                <input type="number" id="fuelPrice" placeholder="Ej: 23.66" required step="0.01">
+                <small class="hint" id="lastPriceHint">Último precio: $---</small>
+            </div>
+
+            <div class="form-group total-cost">
+                <label>💵 Costo total</label>
+                <div class="total-amount" id="totalCost">$0.00</div>
+            </div>
+
+            <button type="submit" class="btn-primary">💾 Guardar carga</button>
+        </form>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/add-fuel.js"></script>
+</body>
+</html>

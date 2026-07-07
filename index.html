@@ -23,25 +23,6 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* ===== ELIMINAR CUALQUIER PUNTO NEGRO ===== */
-        /* Eliminar cualquier pseudo-elemento que pueda crear un punto */
-        *::before,
-        *::after {
-            display: none !important;
-            content: none !important;
-        }
-
-        /* Eliminar cualquier elemento que pueda ser un punto */
-        .punto,
-        .punto-negro,
-        .dot,
-        .circle,
-        [class*="punto"],
-        [class*="dot"] {
-            display: none !important;
-        }
-
-        /* Eliminar spinners de inputs number */
         input[type=number]::-webkit-outer-spin-button,
         input[type=number]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -91,7 +72,6 @@
             border-radius: 0 0 20px 20px;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
             position: relative;
-            overflow: hidden;
         }
 
         .header-top {
@@ -106,73 +86,154 @@
             gap: 6px;
         }
 
-        .header-left .car-name {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .header-left .btn-edit-car {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: white;
-            padding: 0 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            height: 22px;
-            display: flex;
-            align-items: center;
-        }
-
-        .header-left .page-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .header-right {
+        .app-name {
             font-size: 13px;
             font-weight: 600;
             opacity: 0.8;
             letter-spacing: 0.5px;
         }
 
-        .odometer-row {
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right .page-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* ===== BOTÓN 3 PUNTOS ===== */
+        .btn-menu {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .btn-menu:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.9);
+        }
+
+        /* ===== MENÚ DESPLEGABLE ===== */
+        .menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 16px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 6px 0;
+            min-width: 180px;
+            z-index: 200;
+            margin-top: 4px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .menu-dropdown .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .menu-dropdown .menu-item:hover {
+            background: #f0f2f5;
+        }
+
+        .menu-dropdown .menu-item:active {
+            background: #e5e7eb;
+        }
+
+        .menu-dropdown .menu-item span:first-child {
+            font-size: 16px;
+        }
+
+        /* ===== INICIO HEADER ===== */
+        .inicio-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 14px 18px 16px;
+            color: white;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            margin-bottom: 12px;
+        }
+
+        .car-name-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .car-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn-edit-car {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            height: 22px;
+            display: flex;
+            align-items: center;
+        }
+
+        .inicio-header .odometer-row {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 6px;
-            margin-top: 6px;
         }
 
-        .odometer-row.hidden {
-            display: none;
-        }
-
-        .odo-label {
+        .inicio-header .odo-label {
             font-size: 12px;
             opacity: 0.7;
         }
 
-        .odo-value {
+        .inicio-header .odo-value {
             font-size: 32px;
             font-weight: 700;
             cursor: pointer;
             padding: 2px 10px;
             border-radius: 8px;
-            transition: background 0.2s;
             user-select: none;
         }
 
-        .odo-value.clickable:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .odo-value.clickable:active {
+        .inicio-header .odo-value:active {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(0.96);
         }
 
-        .odo-unit {
+        .inicio-header .odo-unit {
             font-size: 14px;
             opacity: 0.7;
         }
@@ -212,6 +273,7 @@
             background: white;
         }
 
+        /* ===== PESTAÑAS ===== */
         .tab-content {
             display: none;
             flex: 1;
@@ -348,11 +410,6 @@
             font-size: 13px;
         }
 
-        .empty-state-mini small {
-            color: #ccc;
-            font-size: 12px;
-        }
-
         /* ===== HISTORIAL ===== */
         .summary-row {
             display: grid;
@@ -463,6 +520,7 @@
             font-size: 13px;
         }
 
+        /* ===== SERVICIOS ===== */
         .service-list-compact {
             display: flex;
             flex-direction: column;
@@ -566,6 +624,7 @@
             display: none;
         }
 
+        /* ===== BOTTOM NAV ===== */
         .bottom-nav-mini {
             position: fixed;
             bottom: 0;
@@ -788,6 +847,7 @@
             color: white;
         }
 
+        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             top: 80px;
@@ -803,6 +863,7 @@
             max-width: 90%;
             text-align: center;
             pointer-events: none;
+            display: none;
         }
 
         .toast.success {
@@ -824,8 +885,9 @@
             }
         }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 400px) {
-            .odo-value {
+            .inicio-header .odo-value {
                 font-size: 26px;
             }
             .fuel-consumption-compact {
@@ -869,6 +931,15 @@
                 height: 48px;
                 font-size: 24px;
             }
+            .btn-menu {
+                font-size: 18px;
+                width: 26px;
+                height: 26px;
+            }
+            .menu-dropdown {
+                min-width: 150px;
+                right: 8px;
+            }
         }
     </style>
 </head>
@@ -878,36 +949,40 @@
 
     <div class="app">
 
-        <!-- ===== HEADER ===== -->
+        <!-- ===== HEADER FIJO ===== -->
         <header class="header-mini" id="mainHeader">
             <div class="header-top">
-                <div class="header-left" id="headerLeft">
-                    <span class="car-name" id="carNameDisplay">Mi Auto</span>
-                    <button class="btn-edit-car" id="editCarNameBtn">✏️</button>
+                <div class="header-left">
+                    <span class="app-name">⛽ GasApp</span>
                 </div>
-                <div class="header-right">⛽ GasApp</div>
-            </div>
-            <div class="odometer-row" id="odometerRow">
-                <span class="odo-label">Odómetro</span>
-                <span class="odo-value clickable" id="currentOdometer">0</span>
-                <span class="odo-unit">km</span>
+                <div class="header-right">
+                    <span class="page-title" id="headerTitle">Inicio</span>
+                    <button class="btn-menu" id="menuBtn" onclick="toggleMenu()" aria-label="Menú">⋮</button>
+                </div>
             </div>
         </header>
 
-        <!-- ===== MODAL PARA EDITAR NOMBRE ===== -->
-        <div class="modal-overlay" id="nombreModal">
-            <div class="modal-box">
-                <h2>✏️ Editar nombre del auto</h2>
-                <input type="text" id="nombreInput" class="modal-input" placeholder="Ej: Nissan March" value="Mi Auto">
-                <div class="modal-actions">
-                    <button class="btn-modal-cancel" id="nombreCancel">Cancelar</button>
-                    <button class="btn-modal-save" id="nombreSave">Guardar</button>
-                </div>
+        <!-- ===== MENÚ ADMIN ===== -->
+        <div class="menu-dropdown" id="adminMenu">
+            <div class="menu-item" onclick="importarBackup()">
+                <span>📥</span> Restaurar backup
             </div>
         </div>
 
-        <!-- ===== PESTAÑAS ===== -->
+        <!-- ===== PESTAÑA INICIO ===== -->
         <div id="tabInicio" class="tab-content active">
+            <div class="inicio-header">
+                <div class="car-name-row">
+                    <span class="car-name" id="carNameDisplay">Mi Auto</span>
+                    <button class="btn-edit-car" id="editCarNameBtn">✏️</button>
+                </div>
+                <div class="odometer-row">
+                    <span class="odo-label">Odómetro</span>
+                    <span class="odo-value clickable" id="currentOdometer">0</span>
+                    <span class="odo-unit">km</span>
+                </div>
+            </div>
+
             <div class="service-alert-mini" id="serviceAlert" style="display:none;">
                 <span class="alert-icon">🔧</span>
                 <div class="alert-text">
@@ -921,6 +996,7 @@
             </div>
         </div>
 
+        <!-- ===== PESTAÑA HISTORIAL ===== -->
         <div id="tabHistorial" class="tab-content">
             <div class="summary-row">
                 <div class="summary-item">
@@ -948,16 +1024,17 @@
             </div>
         </div>
 
+        <!-- ===== PESTAÑA SERVICIOS ===== -->
         <div id="tabServicios" class="tab-content">
             <div id="servicesList" class="service-list-compact">
                 <div class="empty-state-mini">No hay servicios registrados</div>
             </div>
         </div>
 
-        <!-- ===== BOTÓN FLOTANTE ===== -->
+        <!-- ===== FAB ===== -->
         <button class="fab-mini" id="fabBtn">+</button>
 
-        <!-- ===== NAVEGACIÓN INFERIOR ===== -->
+        <!-- ===== BOTTOM NAV ===== -->
         <nav class="bottom-nav-mini">
             <button class="nav-item active" data-tab="tabInicio">
                 <span>📊</span>
@@ -974,10 +1051,22 @@
         </nav>
 
         <!-- ============================================================ -->
-        <!-- MODALES PRINCIPALES -->
+        <!-- MODALES -->
         <!-- ============================================================ -->
 
-        <!-- MODAL: Editar odómetro -->
+        <!-- MODAL NOMBRE -->
+        <div class="modal-overlay" id="nombreModal">
+            <div class="modal-box">
+                <h2>✏️ Editar nombre del auto</h2>
+                <input type="text" id="nombreInput" class="modal-input" placeholder="Ej: Nissan March" value="Mi Auto">
+                <div class="modal-actions">
+                    <button class="btn-modal-cancel" id="nombreCancel">Cancelar</button>
+                    <button class="btn-modal-save" id="nombreSave">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL ODÓMETRO -->
         <div class="modal-overlay" id="odoModal">
             <div class="modal-box">
                 <h2>Editar odómetro</h2>
@@ -989,7 +1078,7 @@
             </div>
         </div>
 
-        <!-- MODAL: Agregar/Editar carga -->
+        <!-- MODAL CARGA -->
         <div class="modal-overlay" id="fuelModal">
             <div class="modal-box">
                 <button class="modal-close" id="fuelModalClose">✕</button>
@@ -1028,7 +1117,7 @@
             </div>
         </div>
 
-        <!-- MODAL: Agregar/Editar servicio -->
+        <!-- MODAL SERVICIO -->
         <div class="modal-overlay" id="serviceModal">
             <div class="modal-box">
                 <button class="modal-close" id="serviceModalClose">✕</button>
@@ -1161,6 +1250,110 @@
         }
 
         // ================================================================
+        // BACKUP AUTOMÁTICO Y RESTAURACIÓN
+        // ================================================================
+
+        // --- BACKUP AUTOMÁTICO (se genera solo al guardar/editar/eliminar) ---
+        function generarBackupAutomatico() {
+            try {
+                const datos = {
+                    version: '1.0',
+                    fecha: new Date().toISOString(),
+                    carName: getCarName(),
+                    initialKm: getInitialKm(),
+                    lastPrice: getLastPrice(),
+                    fuels: getAllFuels(),
+                    services: getAllServices()
+                };
+
+                const json = JSON.stringify(datos, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'gasapp-backup.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                console.log('✅ Backup automático guardado');
+            } catch (error) {
+                console.error('Error en backup automático:', error);
+            }
+        }
+
+        // --- MENÚ ADMIN ---
+        function toggleMenu() {
+            const menu = document.getElementById('adminMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('adminMenu');
+            const btn = document.getElementById('menuBtn');
+            if (menu && btn) {
+                if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                    menu.style.display = 'none';
+                }
+            }
+        });
+
+        // --- IMPORTAR BACKUP (MANUAL) ---
+        function importarBackup() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = async (e) => {
+                try {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const text = await file.text();
+                    const datos = JSON.parse(text);
+
+                    if (!datos.fuels || !datos.services) {
+                        showToast('❌ Archivo inválido', 'error');
+                        return;
+                    }
+
+                    if (!confirm('¿Restaurar backup? Se perderán los datos actuales.')) return;
+
+                    // Limpiar datos actuales
+                    const fuels = await getAllFuels();
+                    const services = await getAllServices();
+                    for (const f of fuels) await deleteFuel(f.id);
+                    for (const s of services) await deleteService(s.id);
+                    localStorage.clear();
+
+                    // Restaurar configuración
+                    if (datos.carName) saveCarName(datos.carName);
+                    if (datos.initialKm) saveInitialKm(datos.initialKm);
+                    if (datos.lastPrice) saveLastPrice(datos.lastPrice);
+
+                    // Restaurar datos
+                    for (const fuel of datos.fuels) {
+                        await addFuel(fuel);
+                    }
+                    for (const service of datos.services) {
+                        await addService(service);
+                    }
+
+                    showToast('✅ Backup restaurado correctamente', 'success');
+                    toggleMenu();
+                    location.reload();
+
+                } catch (error) {
+                    console.error('Error al importar:', error);
+                    showToast('❌ Error al importar: ' + error.message, 'error');
+                }
+            };
+            input.click();
+        }
+
+        // ================================================================
         // INDEXEDDB
         // ================================================================
 
@@ -1191,6 +1384,8 @@
                 };
             });
         }
+
+        // --- COMBUSTIBLE ---
 
         async function addFuel(entry) {
             await openDB();
@@ -1274,6 +1469,8 @@
                 request.onerror = () => reject(request.error);
             });
         }
+
+        // --- SERVICIOS ---
 
         async function addService(entry) {
             await openDB();
@@ -1382,25 +1579,13 @@
                 n.classList.toggle('active', n.dataset.tab === tabId);
             });
 
-            const odoRow = document.getElementById('odometerRow');
-            const headerLeft = document.getElementById('headerLeft');
-
+            const headerTitle = document.getElementById('headerTitle');
             if (tabId === 'tabInicio') {
-                const carName = getCarName();
-                headerLeft.innerHTML = `
-                    <span class="car-name">${carName}</span>
-                    <button class="btn-edit-car" id="editCarNameBtn">✏️</button>
-                `;
-                document.getElementById('editCarNameBtn').addEventListener('click', () => {
-                    abrirModalNombre();
-                });
-                odoRow.classList.remove('hidden');
+                headerTitle.textContent = 'Inicio';
             } else if (tabId === 'tabHistorial') {
-                headerLeft.innerHTML = `<span class="page-title">Historial</span>`;
-                odoRow.classList.add('hidden');
+                headerTitle.textContent = 'Historial';
             } else if (tabId === 'tabServicios') {
-                headerLeft.innerHTML = `<span class="page-title">Servicios</span>`;
-                odoRow.classList.add('hidden');
+                headerTitle.textContent = 'Servicios';
             }
 
             const fab = document.getElementById('fabBtn');
@@ -1420,7 +1605,7 @@
         }
 
         // ================================================================
-        // MODAL PARA EDITAR NOMBRE
+        // MODAL NOMBRE
         // ================================================================
 
         function abrirModalNombre() {
@@ -1447,7 +1632,7 @@
             }
             saveCarName(newName);
             document.getElementById('nombreModal').classList.remove('active');
-            const carNameSpan = document.querySelector('#headerLeft .car-name');
+            const carNameSpan = document.querySelector('.car-name');
             if (carNameSpan) {
                 carNameSpan.textContent = newName;
             }
@@ -1466,14 +1651,17 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const carName = getCarName();
-            const headerLeft = document.getElementById('headerLeft');
-            headerLeft.innerHTML = `
-                <span class="car-name">${carName}</span>
-                <button class="btn-edit-car" id="editCarNameBtn">✏️</button>
-            `;
-            document.getElementById('editCarNameBtn').addEventListener('click', () => {
-                abrirModalNombre();
-            });
+            const carNameSpan = document.querySelector('.car-name');
+            if (carNameSpan) {
+                carNameSpan.textContent = carName;
+            }
+
+            const editBtn = document.getElementById('editCarNameBtn');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    abrirModalNombre();
+                });
+            }
 
             switchTab('tabInicio');
 
@@ -1748,6 +1936,9 @@
                 await populateMonthSelector();
                 await updateHistory();
 
+                // Backup automático
+                generarBackupAutomatico();
+
             } catch (error) {
                 console.error('Error:', error);
                 showToast('❌ Error: ' + error.message, 'error');
@@ -1765,6 +1956,7 @@
                 await updateDashboard();
                 await populateMonthSelector();
                 await updateHistory();
+                generarBackupAutomatico();
             } catch (error) {
                 showToast('❌ Error al eliminar', 'error');
             }
@@ -1872,6 +2064,9 @@
                 await loadServices();
                 await updateDashboard();
 
+                // Backup automático
+                generarBackupAutomatico();
+
             } catch (error) {
                 console.error('Error:', error);
                 showToast('❌ Error: ' + error.message, 'error');
@@ -1888,6 +2083,7 @@
                 document.getElementById('serviceModal').classList.remove('active');
                 await loadServices();
                 await updateDashboard();
+                generarBackupAutomatico();
             } catch (error) {
                 showToast('❌ Error al eliminar', 'error');
             }

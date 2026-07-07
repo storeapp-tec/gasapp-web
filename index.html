@@ -12,15 +12,16 @@
         <!-- Header minimalista -->
         <header class="header-mini">
             <div class="header-top">
+                <div class="car-name-row">
+                    <span class="car-name" id="carName">Mi Auto</span>
+                    <button class="btn-edit-car" id="editCarName">✏️</button>
+                </div>
                 <span class="app-name">⛽ GasApp</span>
-                <button class="btn-edit-car" id="editCarName">✏️</button>
             </div>
-            <div class="car-name" id="carName">Mi Auto</div>
             <div class="odometer-row">
                 <span class="odo-label">Odómetro</span>
-                <span class="odo-value" id="currentOdometer">0</span>
+                <span class="odo-value clickable" id="currentOdometer">0</span>
                 <span class="odo-unit">km</span>
-                <button class="btn-odo-edit" id="editOdometerBtn">✏️</button>
             </div>
         </header>
 
@@ -33,7 +34,7 @@
             </div>
         </div>
 
-        <!-- Últimas cargas (lista compacta) -->
+        <!-- Últimas cargas (una línea) -->
         <div class="section-label">Últimas cargas</div>
         <div id="lastFuels" class="fuel-list-compact">
             <div class="empty-state-mini">Sin registros</div>

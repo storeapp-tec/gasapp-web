@@ -1,81 +1,72 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Nombre del auto
     document.getElementById('carName').textContent = getCarName();
-    
+
+    // Editar nombre del auto
     document.getElementById('editCarName').addEventListener('click', () => {
-        const currentName = getCarName();
-        const newName = prompt('✏️ Editar nombre del auto:', currentName);
+        const newName = prompt('Nombre del auto:', getCarName());
         if (newName && newName.trim()) {
             saveCarName(newName.trim());
             document.getElementById('carName').textContent = newName.trim();
             showToast('✅ Nombre actualizado', 'success');
         }
     });
-    
+
+    // Editar odómetro - ABRIR MODAL
+    document.getElementById('editOdometerBtn').addEventListener('click', () => {
+        const current = document.getElementById('currentOdometer').textContent.replace(/,/g, '');
+        document.getElementById('odoInput').value = current;
+        document.getElementById('odoModal').classList.add('active');
+        document.getElementById('odoInput').focus();
+        document.getElementById('odoInput').select();
+    });
+
+    // Cancelar modal
+    document.getElementById('odoCancel').addEventListener('click', () => {
+        document.getElementById('odoModal').classList.remove('active');
+    });
+
+    // Guardar odómetro
+    document.getElementById('odoSave').addEventListener('click', async () => {
+        const value = parseFloat(document.getElementById('odoInput').value);
+        if (!value || value < 0) {
+            showToast('❌ Ingresa un valor válido', 'error');
+            return;
+        }
+        saveInitialKm(value);
+        document.getElementById('currentOdometer').textContent = formatNumber(value);
+        document.getElementById('odoModal').classList.remove('active');
+        showToast('✅ Odómetro actualizado', 'success');
+        await updateDashboard();
+    });
+
+    // Cerrar modal con ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.getElementById('odoModal').classList.remove('active');
+        }
+    });
+
+    // Botón nueva carga
     document.getElementById('addFuelBtn').addEventListener('click', () => {
         location.href = 'add-fuel.html';
     });
-    
-    document.getElementById('serviceBtn').addEventListener('click', async () => {
-        try {
-            const services = await getAllServices();
-            
-            if (services.length === 0) {
-                const add = confirm('🔧 No hay servicios registrados.\n¿Quieres agregar uno nuevo?');
-                if (add) location.href = 'add-service.html';
-                return;
-            }
-            
-            let options = '📋 Servicios guardados:\n\n';
-            options += '0: ➕ Agregar nuevo servicio\n';
-            const currentOdometer = await getCurrentOdometer();
-            services.forEach((s, index) => {
-                const kmLeft = s.nextKm - currentOdometer;
-                options += `${index + 1}: ${s.type} (próximo: ${formatNumber(s.nextKm)} km, faltan ${formatNumber(kmLeft)} km)\n`;
-            });
-            options += '\nEscribe el número:';
-            
-            const choice = prompt(options);
-            if (choice === null) return;
-            
-            const index = parseInt(choice);
-            if (isNaN(index)) {
-                showToast('❌ Opción inválida', 'error');
-                return;
-            }
-            
-            if (index === 0) {
-                location.href = 'add-service.html';
-            } else if (index > 0 && index <= services.length) {
-                const service = services[index - 1];
-                location.href = `edit-service.html?id=${service.id}`;
-            } else {
-                showToast('❌ Opción inválida', 'error');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showToast('❌ Error al cargar servicios', 'error');
-        }
+
+    // Botón servicios - AHORA VA A services.html
+    document.getElementById('serviceBtn').addEventListener('click', () => {
+        location.href = 'services.html';
     });
-    
+
     await updateDashboard();
 });
-
-async function getCurrentOdometer() {
-    const lastFuel = await getLastFuel();
-    if (lastFuel) return lastFuel.odometer;
-    
-    const initialKm = getInitialKm();
-    if (initialKm) return initialKm;
-    
-    return 0;
-}
 
 async function updateDashboard() {
     try {
         const allFuels = await getAllFuels();
         const lastFuel = await getLastFuel();
         const initialKm = getInitialKm();
-        
+
+        // Odómetro
         let currentOdometer = 0;
         if (lastFuel) {
             currentOdometer = lastFuel.odometer;
@@ -83,26 +74,11 @@ async function updateDashboard() {
             currentOdometer = initialKm;
         }
         document.getElementById('currentOdometer').textContent = formatNumber(currentOdometer);
-        
-        if (!lastFuel && !initialKm) {
-            document.getElementById('lastFuels').innerHTML = `
-                <div class="empty-state">
-                    🚗 Configura tu auto<br>
-                    <small>Agrega tu primera carga o establece el km inicial</small>
-                </div>
-            `;
-            document.getElementById('serviceAlert').style.display = 'none';
-            return;
-        }
-        
+
+        // Últimas cargas
         const container = document.getElementById('lastFuels');
         if (allFuels.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    📭 No hay cargas registradas<br>
-                    <small>Agrega tu primera carga de combustible</small>
-                </div>
-            `;
+            container.innerHTML = `<div class="empty-state-mini">Sin registros</div>`;
         } else {
             const latest = allFuels.slice(0, 5);
             let html = '';
@@ -117,18 +93,18 @@ async function updateDashboard() {
                 }
                 const consumptionClass = getConsumptionColor(consumption);
                 const emoji = getConsumptionEmoji(consumption);
-                
+
                 html += `
-                    <div class="fuel-item">
-                        <div class="fuel-left">
-                            <div class="fuel-date">${formatShortDate(fuel.date)}</div>
-                            <div class="fuel-details">
-                                <span class="fuel-liters">⛽ ${fuel.liters.toFixed(1)} L</span>
-                                <span class="fuel-cost">$${fuel.totalCost.toFixed(2)}</span>
+                    <div class="fuel-item-compact" onclick="editFuel(${fuel.id})">
+                        <div class="fuel-left-compact">
+                            <div class="fuel-date-compact">${formatDateShort(fuel.date)}</div>
+                            <div class="fuel-details-compact">
+                                <span class="fuel-liters-compact">⛽ ${fuel.liters.toFixed(1)} L</span>
+                                <span class="fuel-cost-compact">$${fuel.totalCost.toFixed(2)}</span>
                             </div>
                         </div>
-                        <div class="fuel-right">
-                            <div class="fuel-consumption ${consumptionClass}">
+                        <div class="fuel-right-compact">
+                            <div class="fuel-consumption-compact ${consumptionClass}">
                                 ${emoji} ${consumption > 0 ? consumption.toFixed(1) : '0.0'} km/L
                             </div>
                         </div>
@@ -137,38 +113,29 @@ async function updateDashboard() {
             }
             container.innerHTML = html;
         }
-        
+
+        // Alerta servicio
         const nextService = await getNextService(currentOdometer);
         const alertDiv = document.getElementById('serviceAlert');
-        
         if (nextService) {
             const kmLeft = nextService.nextKm - currentOdometer;
             if (kmLeft <= 500 && kmLeft > 0) {
                 alertDiv.style.display = 'flex';
                 document.getElementById('serviceDetail').textContent = nextService.type;
-                document.getElementById('serviceKm').textContent = `⚠️ Faltan ${formatNumber(kmLeft)} km (programado: ${formatNumber(nextService.nextKm)} km)`;
-                
-                if (kmLeft <= 100) {
-                    document.getElementById('serviceKm').style.color = '#ef4444';
-                } else if (kmLeft <= 300) {
-                    document.getElementById('serviceKm').style.color = '#f59e0b';
-                } else {
-                    document.getElementById('serviceKm').style.color = '#10b981';
-                }
+                document.getElementById('serviceKm').textContent = `Faltan ${formatNumber(kmLeft)} km (${formatNumber(nextService.nextKm)} km)`;
+                document.getElementById('serviceKm').style.color = kmLeft <= 100 ? '#ef4444' : kmLeft <= 300 ? '#f59e0b' : '#10b981';
             } else {
                 alertDiv.style.display = 'none';
             }
         } else {
             alertDiv.style.display = 'none';
         }
-        
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('lastFuels').innerHTML = `
-            <div class="empty-state">
-                📭 Sin datos para mostrar<br>
-                <small>Agrega tu primera carga de combustible</small>
-            </div>
-        `;
     }
+}
+
+// Función para editar carga (desde el dashboard)
+function editFuel(id) {
+    location.href = `edit-fuel.html?id=${id}`;
 }

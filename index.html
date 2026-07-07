@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fuelio - Nissan March</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="container">
+        <!-- Header con nombre del auto editable -->
+        <header>
+            <div class="car-header">
+                <h1 id="carName">Nissan March</h1>
+                <button class="edit-btn" id="editCarName">✏️</button>
+            </div>
+            <div class="odometer-display">
+                <span class="odometer-value" id="currentOdometer">0</span>
+                <span class="odometer-unit">km</span>
+            </div>
+        </header>
+
+        <!-- Alerta de próximo servicio -->
+        <div class="service-alert" id="serviceAlert" style="display:none;">
+            <div class="alert-icon">🔧</div>
+            <div class="alert-content">
+                <div class="alert-title">Próximo servicio</div>
+                <div class="alert-detail" id="serviceDetail">Cambio de aceite</div>
+                <div class="alert-km" id="serviceKm">Faltan 500 km</div>
+            </div>
+        </div>
+
+        <!-- Últimas cargas -->
+        <div class="section-title">📊 Últimas cargas</div>
+        <div id="lastFuels" class="fuel-list">
+            <!-- Se llena con JavaScript -->
+            <div class="empty-state">No hay registros aún</div>
+        </div>
+
+        <!-- Botón flotante para nueva carga -->
+        <button class="fab" id="addFuelBtn">➕</button>
+
+        <!-- Navegación inferior -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="location.href='index.html'">
+                <span class="nav-icon">📊</span>
+                <span>Inicio</span>
+            </button>
+            <button class="nav-btn" onclick="location.href='history.html'">
+                <span class="nav-icon">📈</span>
+                <span>Historial</span>
+            </button>
+            <button class="nav-btn" id="serviceBtn">
+                <span class="nav-icon">🔧</span>
+                <span>Servicios</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

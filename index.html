@@ -23,18 +23,15 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        /* ===== OCULTAR CURSOR DE INPUTS ===== */
-        input,
-        textarea,
-        select {
-            caret-color: transparent !important;
-        }
-        input:focus,
-        textarea:focus,
-        select:focus {
-            caret-color: transparent !important;
+        /* ===== NADA DE PUNTOS NEGROS ===== */
+        /* Eliminar cualquier pseudo-elemento que pueda crear un punto */
+        *::before,
+        *::after {
+            display: none !important;
+            content: none !important;
         }
 
+        /* Eliminar spinners de inputs number */
         input[type=number]::-webkit-outer-spin-button,
         input[type=number]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -43,12 +40,6 @@
         input[type=number] {
             -moz-appearance: textfield;
             appearance: none;
-        }
-
-        *::before,
-        *::after {
-            display: none !important;
-            content: none !important;
         }
 
         body {
@@ -759,7 +750,6 @@
             gap: 8px;
         }
 
-        /* Botones del modal de nombre */
         .modal-actions {
             display: flex;
             gap: 10px;
@@ -1389,7 +1379,6 @@
                     <span class="car-name">${carName}</span>
                     <button class="btn-edit-car" id="editCarNameBtn">✏️</button>
                 `;
-                // Re-asignar evento al botón de editar nombre
                 document.getElementById('editCarNameBtn').addEventListener('click', () => {
                     abrirModalNombre();
                 });
@@ -1419,7 +1408,7 @@
         }
 
         // ================================================================
-        // MODAL PARA EDITAR NOMBRE DEL AUTO (NUEVO)
+        // MODAL PARA EDITAR NOMBRE
         // ================================================================
 
         function abrirModalNombre() {
@@ -1446,7 +1435,6 @@
             }
             saveCarName(newName);
             document.getElementById('nombreModal').classList.remove('active');
-            // Actualizar el nombre en el header
             const carNameSpan = document.querySelector('#headerLeft .car-name');
             if (carNameSpan) {
                 carNameSpan.textContent = newName;
@@ -1465,7 +1453,6 @@
         // ================================================================
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Mostrar el nombre inicial
             const carName = getCarName();
             const headerLeft = document.getElementById('headerLeft');
             headerLeft.innerHTML = `
@@ -1478,7 +1465,6 @@
 
             switchTab('tabInicio');
 
-            // Odómetro - clic
             document.getElementById('currentOdometer').addEventListener('click', () => {
                 const current = document.getElementById('currentOdometer').textContent.replace(/,/g, '');
                 document.getElementById('odoInput').value = current;
@@ -1747,7 +1733,6 @@
 
                 document.getElementById('fuelModal').classList.remove('active');
                 await updateDashboard();
-                // Recargar historial después de guardar/editar
                 await populateMonthSelector();
                 await updateHistory();
 
@@ -1956,7 +1941,7 @@
         }
 
         // ================================================================
-        // HISTORIAL - CORREGIDO (VERSIÓN ORIGINAL QUE FUNCIONABA)
+        // HISTORIAL
         // ================================================================
 
         let histMonth = new Date().getMonth();

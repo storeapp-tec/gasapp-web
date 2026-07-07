@@ -3,57 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Historial - GasApp</title>
+    <title>Historial</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📈 Historial</h1>
-            <button class="back-btn" onclick="location.href='index.html'">←</button>
+    <div class="app">
+        <header class="header-modal">
+            <button class="btn-back" onclick="location.href='index.html'">‹</button>
+            <span class="modal-title">Historial</span>
+            <span></span>
         </header>
 
-        <div class="monthly-summary" id="monthlySummary">
-            <div class="summary-card">
-                <div class="summary-label">Mes</div>
-                <div class="summary-value" id="summaryMonth">---</div>
+        <!-- Resumen compacto -->
+        <div class="summary-row">
+            <div class="summary-item">
+                <span class="sum-label">Mes</span>
+                <span class="sum-value" id="summaryMonth">---</span>
             </div>
-            <div class="summary-card">
-                <div class="summary-label">Gastos</div>
-                <div class="summary-value" id="summaryTotal">$0</div>
+            <div class="summary-item">
+                <span class="sum-label">Gastos</span>
+                <span class="sum-value" id="summaryTotal">$0</span>
             </div>
-            <div class="summary-card">
-                <div class="summary-label">Litros</div>
-                <div class="summary-value" id="summaryLiters">0 L</div>
+            <div class="summary-item">
+                <span class="sum-label">Litros</span>
+                <span class="sum-value" id="summaryLiters">0 L</span>
             </div>
-            <div class="summary-card">
-                <div class="summary-label">Promedio</div>
-                <div class="summary-value" id="summaryAvg">0 km/L</div>
+            <div class="summary-item">
+                <span class="sum-label">Promedio</span>
+                <span class="sum-value" id="summaryAvg">0 km/L</span>
             </div>
         </div>
 
-        <div class="month-selector">
-            <button id="prevMonth">◀</button>
-            <span id="currentMonthDisplay">Junio 2026</span>
-            <button id="nextMonth">▶</button>
+        <!-- Selector de mes con dropdown -->
+        <div class="month-selector-compact">
+            <select id="monthSelect" class="month-dropdown">
+                <!-- Se llena con JS -->
+            </select>
         </div>
 
-        <div id="historyList" class="history-list">
-            <div class="empty-state">📭 No hay registros</div>
+        <!-- Lista de registros -->
+        <div id="historyList" class="history-list-compact">
+            <div class="empty-state-mini">Sin registros</div>
         </div>
 
-        <nav class="bottom-nav">
-            <button class="nav-btn" onclick="location.href='index.html'">
-                <span class="nav-icon">📊</span>
+        <nav class="bottom-nav-mini">
+            <button class="nav-item" onclick="location.href='index.html'">
+                <span>📊</span>
                 <span>Inicio</span>
             </button>
-            <button class="nav-btn active" onclick="location.href='history.html'">
-                <span class="nav-icon">📈</span>
+            <button class="nav-item active" onclick="location.href='history.html'">
+                <span>📈</span>
                 <span>Historial</span>
             </button>
-            <button class="nav-btn" onclick="location.href='index.html'">
-                <span class="nav-icon">🔧</span>
+            <button class="nav-item" onclick="location.href='index.html'">
+                <span>🔧</span>
                 <span>Servicios</span>
             </button>
         </nav>

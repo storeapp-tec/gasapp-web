@@ -1272,10 +1272,12 @@
             return `${day} de ${month} ${d.getFullYear()}`;
         }
 
+        // ===== FUNCIÓN DE CONSUMO CORREGIDA =====
         function calculateConsumption(prevOdometer, currOdometer, liters) {
             if (!prevOdometer || !currOdometer || !liters || liters <= 0) return 0;
             const km = currOdometer - prevOdometer;
             if (km <= 0) return 0;
+            // Redondeo a 1 decimal
             return Math.round((km / liters) * 10) / 10;
         }
 
@@ -1334,7 +1336,7 @@
             return km ? parseFloat(km) : null;
         }
 
-        // ===== BACKUP AUTOMÁTICO (sobrescribe el mismo archivo) =====
+        // ===== BACKUP AUTOMÁTICO (SIEMPRE SOBRESCRIBE) =====
         function generarBackupAutomatico() {
             try {
                 const promesaFuels = getAllFuels();
@@ -1353,7 +1355,7 @@
                     const blob = new Blob([json], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
                     
-                    // Forzar la descarga y sobrescritura
+                    // Forzar descarga con el mismo nombre
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = 'gasapp-backup.json';
@@ -1820,7 +1822,7 @@
         }
 
         // ================================================================
-        // FUEL MODAL
+        // FUEL MODAL (CORREGIDO CON PRECARGA DE 38 LITROS)
         // ================================================================
 
         let editingFuelId = null;
@@ -1832,10 +1834,18 @@
             const submitBtn = document.getElementById('fuelSubmitBtn');
             const deleteBtn = document.getElementById('deleteFuelBtn');
             const form = document.getElementById('fuelForm');
+            
+            // Resetear el formulario primero
             form.reset();
             deleteBtn.style.display = 'none';
+            
+            // === PRECARGAR LITROS CON 38.0 SIEMPRE ===
+            // Esto debe hacerse DESPUÉS del reset y ANTES de cargar datos de edición
+            document.getElementById('fuelLiters').value = '38.0';
+            
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('fuelDate').value = today;
+            
             const lastFuel = await getLastFuel();
             const initialKm = getInitialKm();
             const odoInput = document.getElementById('fuelOdometer');
@@ -1855,10 +1865,8 @@
                 document.getElementById('fuelPrice').value = lastPrice;
             }
             
-            // ===== PRECARGAR LITROS CON 38.0 =====
-            document.getElementById('fuelLiters').value = '38.0';
-            
             if (id) {
+                // MODO EDICIÓN
                 title.textContent = '✏️ Editar carga';
                 submitBtn.textContent = '💾 Actualizar';
                 deleteBtn.style.display = 'block';
@@ -1868,16 +1876,19 @@
                     document.getElementById('editFuelId').value = fuel.id;
                     document.getElementById('fuelDate').value = fuel.date;
                     document.getElementById('fuelOdometer').value = fuel.odometer;
+                    // Al editar, mantener el valor real del registro, NO forzar 38
                     document.getElementById('fuelLiters').value = fuel.liters;
                     document.getElementById('fuelPrice').value = fuel.pricePerLiter;
                     calculateFuelTotal();
                 }
             } else {
+                // MODO NUEVA CARGA: asegurar que el litro sea 38 (aunque el reset lo puso, lo reforzamos)
+                document.getElementById('fuelLiters').value = '38.0';
                 title.textContent = '⛽ Nueva carga';
                 submitBtn.textContent = '💾 Guardar carga';
                 document.getElementById('editFuelId').value = '';
-                document.getElementById('fuelLiters').value = '';
                 document.getElementById('totalCost').textContent = '$0.00';
+                calculateFuelTotal(); // Para actualizar el total
             }
             modal.classList.add('active');
         }
@@ -2115,7 +2126,7 @@
         }
 
         // ================================================================
-        // HISTORIAL CON CÁLCULO CORREGIDO
+        // HISTORIAL CON CÁLCULO CORREGIDO (BUSCA EL ANTERIOR CORRECTO)
         // ================================================================
 
         let histMonth = new Date().getMonth();
@@ -2185,7 +2196,6 @@
                     for (let i = 0; i < fuels.length; i++) {
                         const curr = fuels[i];
                         let prev = null;
-                        // Buscar el registro anterior correctamente (el siguiente en la lista es el anterior en el tiempo)
                         if (i < fuels.length - 1) {
                             prev = fuels[i + 1];
                         } else {
@@ -2229,12 +2239,12 @@
                         consumption = 0,
                         kmDiff = 0;
                     
-                    // Buscar el registro anterior correctamente
+                    // --- LÓGICA CORREGIDA PARA BUSCAR EL REGISTRO ANTERIOR ---
                     if (i < fuels.length - 1) {
                         // El siguiente en la lista es el anterior en el tiempo
                         prev = fuels[i + 1];
                     } else {
-                        // Si es el primer registro del mes (el más reciente del mes), buscar fuera del mes
+                        // Si es el primer registro del mes (el más reciente), buscar fuera del mes
                         const allSorted = await getAllFuels();
                         const idx = allSorted.findIndex(f => f.id === fuel.id);
                         if (idx < allSorted.length - 1) {

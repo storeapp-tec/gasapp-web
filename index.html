@@ -598,7 +598,7 @@
                     <span class="h-card-value" id="summaryLiters">0.0 L</span>
                 </div>
                 <div class="history-summary-card">
-                    <span class="h-card-title">Rendimiento Real</span>
+                    <span class="h-card-title">Rendimiento</span>
                     <span class="h-card-value" id="summaryAvg">0.0 km/L</span>
                 </div>
             </div>
@@ -658,7 +658,7 @@
                 </div>
 
                 <div class="rendimiento-box">
-                    <span class="rendimiento-label">Rendimiento Acumulado:</span>
+                    <span class="rendimiento-label">Rendimiento:</span>
                     <span class="rendimiento-value empty" id="liveRendimiento">Calculando...</span>
                 </div>
 
@@ -776,24 +776,35 @@
             return dateStr;
         }
 
-        // --- CÁLCULO PROGRESIVO/ACUMULADO MATEMÁTICAMENTE EXACTO ---
-        function calculateProgressiveConsumption(chronoFuels) {
+        // --- NUEVA LÓGICA: VENTANA MÓVIL SUAVIZADA DE HASTA 3 ELEMENTOS ---
+        function calculateMovingWindowConsumption(chronoFuels) {
             if (chronoFuels.length === 0) return [];
             
             let advancedFuels = chronoFuels.map(f => ({...f, calculatedConsumption: null, kmDiff: 0}));
-            let firstOdometer = advancedFuels[0].odometer;
-            let totalLitersAccumulated = 0;
 
             for (let i = 0; i < advancedFuels.length; i++) {
-                let current = advancedFuels[i];
-                totalLitersAccumulated += current.liters;
-
                 if (i > 0) {
-                    current.kmDiff = current.odometer - advancedFuels[i-1].odometer;
-                    let overallKmTraveled = current.odometer - firstOdometer;
+                    advancedFuels[i].kmDiff = advancedFuels[i].odometer - advancedFuels[i-1].odometer;
+                }
+
+                // Definimos la ventana móvil: el elemento actual y hasta 2 anteriores (Bloque de 3)
+                let startIndex = Math.max(0, i - 2);
+                let windowElements = advancedFuels.slice(startIndex, i + 1);
+
+                if (windowElements.length >= 2) {
+                    // Los kilómetros del bloque son el odómetro del último elemento menos el odómetro del elemento BASE previo a la ventana
+                    // Para que sea exacto matemáticamente con las cargas intermedias del bloque:
+                    let windowKm = advancedFuels[i].odometer - advancedFuels[startIndex].odometer;
                     
-                    if (overallKmTraveled > 0 && totalLitersAccumulated > 0) {
-                        current.calculatedConsumption = overallKmTraveled / totalLitersAccumulated;
+                    // Sumamos los litros cargados en esa misma ventana EXCLUYENDO la primera carga base del bloque 
+                    // (porque la primera carga base llenó el tramo anterior, los km de este bloque se consumieron con los litros posteriores)
+                    let windowLiters = 0;
+                    for (let k = startIndex + 1; k <= i; k++) {
+                        windowLiters += advancedFuels[k].liters;
+                    }
+
+                    if (windowKm > 0 && windowLiters > 0) {
+                        advancedFuels[i].calculatedConsumption = windowKm / windowLiters;
                     }
                 }
             }
@@ -802,7 +813,7 @@
 
         function updateUI() {
             appData.fuels.sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
-            const computedFuelsChrono = calculateProgressiveConsumption(appData.fuels);
+            const computedFuelsChrono = calculateMovingWindowConsumption(appData.fuels);
             const computedFuelsView = [...computedFuelsChrono].sort((a, b) => new Date(b.date) - new Date(a.date) || b.odometer - a.odometer);
 
             document.getElementById('carNameDisplay').innerText = appData.carName;
@@ -811,7 +822,7 @@
             let displayedOdo = appData.manualOdometer || (appData.fuels.length > 0 ? Math.max(...appData.fuels.map(f => f.odometer)) : 0);
             document.getElementById('mainOdometer').innerText = formatNumber(displayedOdo);
 
-            // ÚLTIMAS 5 CARGAS
+            // ÚLTIMAS 5 CARGAS EN INICIO
             const latestContainer = document.getElementById('latestFuelContainer');
             if (computedFuelsView.length === 0) {
                 latestContainer.innerHTML = `<div class="empty-state-mini">No hay registros de combustible</div>`;
@@ -885,7 +896,7 @@
             document.getElementById('summaryTotal').innerText = `$${formatNumber(totalSpent.toFixed(2))}`;
             document.getElementById('summaryLiters').innerText = `${totalLiters.toFixed(1)} L`;
 
-            // Muestra el último rendimiento calculado válido en el bloque visualizado
+            // El rendimiento global mostrado en las tarjetas superiores del mes toma el promedio de las ventanas válidas del filtro actual
             let validFuels = filteredFuels.filter(f => f.calculatedConsumption !== null);
             document.getElementById('summaryAvg').innerText = validFuels.length > 0 ? validFuels[0].calculatedConsumption.toFixed(1) + " km/L" : "0.0 km/L";
 
@@ -921,7 +932,7 @@
         }
 
         document.getElementById('monthSelect').addEventListener('change', () => {
-            updateHistoryTabFiltered(calculateProgressiveConsumption([...appData.fuels]).sort((a, b) => new Date(b.date) - new Date(a.date)));
+            updateHistoryTabFiltered(calculateMovingWindowConsumption([...appData.fuels]).sort((a, b) => new Date(b.date) - new Date(a.date)));
         });
 
         const fOdoInput = document.getElementById('fuelOdometer');
@@ -930,6 +941,7 @@
         const liveTotalLabel = document.getElementById('liveTotal');
         const liveRendimientoLabel = document.getElementById('liveRendimiento');
 
+        // CÁLCULO EN TIEMPO REAL DESDE EL MODAL (Simulando la inserción en el bloque existente)
         function calculateLiveFuelValues() {
             const odo = parseInt(fOdoInput.value) || 0;
             const liters = parseFloat(fLitersInput.value) || 0;
@@ -938,19 +950,36 @@
             liveTotalLabel.innerText = `$${formatNumber((liters * price).toFixed(2))}`;
 
             const currentId = document.getElementById('editFuelIndex').value;
+            // Filtramos el registro actual si se está editando para no duplicarlo, y agregamos la simulación actual
             let tempFuels = [...appData.fuels.filter(f => String(f.id) !== String(currentId)), { odometer: odo, liters: liters }];
             tempFuels.sort((a,b) => a.odometer - b.odometer);
 
-            let totalLiters = tempFuels.reduce((sum, f) => sum + f.liters, 0);
-            let totalKm = tempFuels[tempFuels.length - 1].odometer - tempFuels[0].odometer;
+            // Buscamos dónde quedó parado nuestro registro simulado
+            let targetIdx = tempFuels.findIndex(f => f.odometer === odo && f.liters === liters);
+            if (targetIdx === -1) targetIdx = tempFuels.length - 1;
 
-            if (totalKm <= 0 || tempFuels.length < 2) {
+            // Tomamos la ventana móvil de máximo 3 hacia atrás para simular el cálculo real
+            let startIdx = Math.max(0, targetIdx - 2);
+            let subWindow = tempFuels.slice(startIdx, targetIdx + 1);
+
+            if (subWindow.length < 2) {
                 liveRendimientoLabel.innerText = "Iniciando";
                 liveRendimientoLabel.className = "rendimiento-value empty";
             } else {
-                let currentAvg = totalKm / totalLiters;
-                liveRendimientoLabel.innerText = `${currentAvg.toFixed(1)} km/L`;
-                liveRendimientoLabel.className = `rendimiento-value ${currentAvg >= 13 ? 'excellent' : (currentAvg >= 10 ? 'good' : 'poor')}`;
+                let windowKm = tempFuels[targetIdx].odometer - tempFuels[startIdx].odometer;
+                let windowLiters = 0;
+                for (let k = startIdx + 1; k <= targetIdx; k++) {
+                    windowLiters += tempFuels[k].liters;
+                }
+
+                if (windowKm <= 0 || windowLiters <= 0) {
+                    liveRendimientoLabel.innerText = "Iniciando";
+                    liveRendimientoLabel.className = "rendimiento-value empty";
+                } else {
+                    let currentAvg = windowKm / windowLiters;
+                    liveRendimientoLabel.innerText = `${currentAvg.toFixed(1)} km/L`;
+                    liveRendimientoLabel.className = `rendimiento-value ${currentAvg >= 13 ? 'excellent' : (currentAvg >= 10 ? 'good' : 'poor')}`;
+                }
             }
         }
 

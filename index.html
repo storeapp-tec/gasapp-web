@@ -101,7 +101,7 @@
             margin-top: -2px;
         }
 
-        /* ===== BOTÓN 3 PUNTOS ===== */
+        /* ===== BOTÓN MENU ===== */
         .btn-menu {
             position: fixed;
             top: 18px;
@@ -119,16 +119,11 @@
         }
 
         @media (max-width: 480px) {
-            .btn-menu {
-                right: 16px;
-            }
+            .btn-menu { right: 16px; }
         }
 
-        .btn-menu:active {
-            transform: scale(0.85);
-        }
+        .btn-menu:active { transform: scale(0.85); }
 
-        /* ===== MENÚ DESPLEGABLE ===== */
         .menu-dropdown {
             position: fixed;
             top: 58px;
@@ -145,9 +140,7 @@
         }
 
         @media (max-width: 480px) {
-            .menu-dropdown {
-                right: 16px;
-            }
+            .menu-dropdown { right: 16px; }
         }
 
         .menu-dropdown .menu-item {
@@ -166,23 +159,9 @@
             font-weight: 500;
         }
 
-        .menu-dropdown .menu-item:hover {
-            background: #f0f2f5;
-        }
-
-        .menu-dropdown .menu-item:active {
-            background: #e5e7eb;
-        }
+        .menu-dropdown .menu-item:hover { background: #f0f2f5; }
 
         /* ===== CONTENEDORES ===== */
-        .card-white {
-            background: white;
-            border-radius: 16px;
-            padding: 16px 18px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
         .inicio-header {
             background: white;
             border-radius: 16px;
@@ -190,6 +169,7 @@
             margin-bottom: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             color: #1a1a2e;
+            text-align: center;
         }
 
         .car-name-row {
@@ -204,13 +184,6 @@
             font-size: 16px;
             font-weight: 600;
             color: #1a1a2e;
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .car-name:active {
-            background: rgba(102, 126, 234, 0.1);
         }
 
         .inicio-header .odometer-row {
@@ -223,16 +196,8 @@
         .inicio-header .odo-value {
             font-size: 32px;
             font-weight: 700;
-            cursor: pointer;
-            padding: 0 6px;
-            border-radius: 6px;
-            user-select: none;
             color: #1a1a2e;
-        }
-
-        .inicio-header .odo-value:active {
-            background: rgba(102, 126, 234, 0.1);
-            transform: scale(0.96);
+            cursor: pointer;
         }
 
         .inicio-header .odo-unit {
@@ -240,7 +205,7 @@
             color: #888;
         }
 
-        /* ===== HISTORIAL CARDS SUPERIORES ===== */
+        /* ===== RENDIMIENTO CARDS ===== */
         .history-grid-4 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -274,7 +239,6 @@
             color: #1a1a2e;
         }
 
-        /* Selector de mes */
         .month-select-container {
             margin-bottom: 10px;
             display: flex;
@@ -291,10 +255,9 @@
             background: white;
             outline: none;
             cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        /* ===== LISTA DE HISTORIAL ===== */
+        /* ===== LISTAS ===== */
         .history-list-compact {
             display: flex;
             flex-direction: column;
@@ -307,11 +270,6 @@
             padding: 10px 14px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
             cursor: pointer;
-            transition: background 0.1s;
-        }
-
-        .history-item-compact:active {
-            background: #f8f9fa;
         }
 
         .history-row1 {
@@ -362,7 +320,6 @@
         .badge-bad { background: #fce8e6; color: #c5221f; }
         .badge-none { background: #f1f3f4; color: #5f6368; }
 
-        /* Formato de línea única resumida */
         .latest-fuels-list {
             display: flex;
             flex-direction: column;
@@ -382,10 +339,6 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-        }
-
-        .single-line-fuel:active {
-            background: #f8f9fa;
         }
 
         /* ===== MODALES ===== */
@@ -418,12 +371,6 @@
             width: 100%;
             max-width: 400px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            transform: scale(0.9);
-            transition: transform 0.2s ease;
-        }
-
-        .modal.active .modal-content {
-            transform: scale(1);
         }
 
         .modal-title {
@@ -435,7 +382,6 @@
 
         .field-group {
             margin-bottom: 12px;
-            text-align: left;
         }
 
         .field-group label {
@@ -446,25 +392,15 @@
             margin-bottom: 4px;
         }
 
-        .field-group input,
-        .field-group select {
+        .field-group input {
             width: 100%;
             padding: 10px 12px;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
             font-size: 14px;
             background: #fafafa;
-            transition: border-color 0.2s;
         }
 
-        .field-group input:focus,
-        .field-group select:focus {
-            border-color: #667eea;
-            outline: none;
-            background: white;
-        }
-
-        /* Caja de Rendimiento dentro del Modal */
         .rendimiento-box {
             display: flex;
             align-items: center;
@@ -510,17 +446,9 @@
             cursor: pointer;
         }
 
-        .btn-modal-primary {
-            background: #667eea;
-            color: white;
-        }
+        .btn-modal-primary { background: #667eea; color: white; }
+        .btn-modal-secondary { background: #f0f2f5; color: #4b5563; }
 
-        .btn-modal-secondary {
-            background: #f0f2f5;
-            color: #4b5563;
-        }
-
-        /* ===== BOTÓN FLOTANTE ===== */
         .btn-fab {
             position: fixed;
             bottom: 76px;
@@ -539,33 +467,21 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
             cursor: pointer;
             z-index: 999;
-            transition: transform 0.15s;
         }
 
         @media (max-width: 480px) {
-            .btn-fab {
-                right: 20px;
-            }
+            .btn-fab { right: 20px; }
         }
 
-        .btn-fab:active {
-            transform: scale(0.9);
-        }
-
-        /* ===== VISTAS / TABS ===== */
         .tab-content {
             display: none;
             flex: 1;
             overflow-y: auto;
             padding: 12px 16px 20px;
-            -webkit-overflow-scrolling: touch;
         }
 
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content.active { display: block; }
 
-        /* VISTA SERVICIOS */
         .service-list-compact {
             display: flex;
             flex-direction: column;
@@ -592,7 +508,6 @@
             margin-bottom: 8px;
         }
 
-        /* ===== BARRA DE NAVEGACIÓN INFERIOR ===== */
         .nav-bar {
             background: white;
             height: 60px;
@@ -611,7 +526,6 @@
             align-items: center;
             color: #888;
             cursor: pointer;
-            user-select: none;
             gap: 2px;
         }
 
@@ -684,7 +598,7 @@
                     <span class="h-card-value" id="summaryLiters">0.0 L</span>
                 </div>
                 <div class="history-summary-card">
-                    <span class="h-card-title">Promedio</span>
+                    <span class="h-card-title">Rendimiento Real</span>
                     <span class="h-card-value" id="summaryAvg">0.0 km/L</span>
                 </div>
             </div>
@@ -744,8 +658,8 @@
                 </div>
 
                 <div class="rendimiento-box">
-                    <span class="rendimiento-label">Rendimiento Estimado:</span>
-                    <span class="rendimiento-value empty" id="liveRendimiento">1er carga</span>
+                    <span class="rendimiento-label">Rendimiento Acumulado:</span>
+                    <span class="rendimiento-value empty" id="liveRendimiento">Calculando...</span>
                 </div>
 
                 <div class="field-group" style="margin-top:12px; margin-bottom:0px; text-align:right;">
@@ -767,7 +681,7 @@
             <div class="modal-title">Configuración del Vehículo</div>
             <div class="field-group">
                 <label>Nombre del Vehículo</label>
-                <input type="text" id="carNameInput" placeholder="Ej. Mi Versa">
+                <input type="text" id="carNameInput">
             </div>
             <div class="modal-buttons">
                 <button type="button" class="btn-modal btn-modal-secondary" id="btnCancelCar">Cancelar</button>
@@ -781,7 +695,7 @@
             <div class="modal-title">Actualizar Odómetro Manual</div>
             <div class="field-group">
                 <label>Kilometraje del Vehículo (km)</label>
-                <input type="number" id="manualOdoInput" step="1" placeholder="Ej. 175950">
+                <input type="number" id="manualOdoInput" step="1">
             </div>
             <div class="modal-buttons">
                 <button type="button" class="btn-modal btn-modal-secondary" id="btnCancelOdo">Cancelar</button>
@@ -797,15 +711,15 @@
                 <input type="hidden" id="editServiceIndex">
                 <div class="field-group">
                     <label>Tipo de Servicio</label>
-                    <input type="text" id="serviceType" required placeholder="Ej. Cambio de Aceite">
+                    <input type="text" id="serviceType" required>
                 </div>
                 <div class="field-group">
                     <label>Kilometraje del Servicio (km)</label>
-                    <input type="number" id="serviceOdometer" step="1" required placeholder="Ej. 45200">
+                    <input type="number" id="serviceOdometer" step="1" required>
                 </div>
                 <div class="field-group">
                     <label>Costo ($)</label>
-                    <input type="number" id="serviceCost" step="0.01" required placeholder="Ej. 1200.00">
+                    <input type="number" id="serviceCost" step="0.01" required>
                 </div>
                 <div class="field-group">
                     <label>Fecha</label>
@@ -838,9 +752,8 @@
                     if (!appData.fuels) appData.fuels = [];
                     if (!appData.services) appData.services = [];
                     if (!appData.carName) appData.carName = 'Mi Vehículo';
-                    if (appData.manualOdometer === undefined) appData.manualOdometer = null;
                 } catch(e) {
-                    console.error("Error cargando localStorage", e);
+                    console.error("Error cargando datos", e);
                 }
             }
         }
@@ -858,56 +771,55 @@
             if (!dateStr) return '';
             const parts = dateStr.split('-');
             if (parts.length === 3) {
-                const yearShort = parts[0].substring(2);
-                const monthIndex = parseInt(parts[1], 10) - 1;
-                const monthStr = mesesNombres[monthIndex] || parts[1];
-                return `${parts[2]}-${monthStr}-${yearShort}`;
+                return `${parts[2]}-${mesesNombres[parseInt(parts[1], 10) - 1] || parts[1]}-${parts[0].substring(2)}`;
             }
             return dateStr;
         }
 
+        // --- CÁLCULO PROGRESIVO/ACUMULADO MATEMÁTICAMENTE EXACTO ---
+        function calculateProgressiveConsumption(chronoFuels) {
+            if (chronoFuels.length === 0) return [];
+            
+            let advancedFuels = chronoFuels.map(f => ({...f, calculatedConsumption: null, kmDiff: 0}));
+            let firstOdometer = advancedFuels[0].odometer;
+            let totalLitersAccumulated = 0;
+
+            for (let i = 0; i < advancedFuels.length; i++) {
+                let current = advancedFuels[i];
+                totalLitersAccumulated += current.liters;
+
+                if (i > 0) {
+                    current.kmDiff = current.odometer - advancedFuels[i-1].odometer;
+                    let overallKmTraveled = current.odometer - firstOdometer;
+                    
+                    if (overallKmTraveled > 0 && totalLitersAccumulated > 0) {
+                        current.calculatedConsumption = overallKmTraveled / totalLitersAccumulated;
+                    }
+                }
+            }
+            return advancedFuels;
+        }
+
         function updateUI() {
-            // ORDEN ESTABLECIDO: de más NUEVA a más VIEJA para visualización estable
-            appData.fuels.sort((a, b) => new Date(b.date) - new Date(a.date) || b.odometer - a.odometer);
-            appData.services.sort((a, b) => new Date(b.date) - new Date(a.date));
+            appData.fuels.sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
+            const computedFuelsChrono = calculateProgressiveConsumption(appData.fuels);
+            const computedFuelsView = [...computedFuelsChrono].sort((a, b) => new Date(b.date) - new Date(a.date) || b.odometer - a.odometer);
 
             document.getElementById('carNameDisplay').innerText = appData.carName;
             document.getElementById('appSubtitle').innerText = appData.carName.toUpperCase();
             
-            let displayedOdo = 0;
-            if (appData.manualOdometer !== null && appData.manualOdometer !== '') {
-                displayedOdo = parseInt(appData.manualOdometer);
-            } else if (appData.fuels.length > 0) {
-                displayedOdo = Math.max(...appData.fuels.map(f => f.odometer));
-            }
+            let displayedOdo = appData.manualOdometer || (appData.fuels.length > 0 ? Math.max(...appData.fuels.map(f => f.odometer)) : 0);
             document.getElementById('mainOdometer').innerText = formatNumber(displayedOdo);
 
-            // ÚLTIMAS 5 CARGAS (INICIO)
+            // ÚLTIMAS 5 CARGAS
             const latestContainer = document.getElementById('latestFuelContainer');
-            if (appData.fuels.length === 0) {
+            if (computedFuelsView.length === 0) {
                 latestContainer.innerHTML = `<div class="empty-state-mini">No hay registros de combustible</div>`;
             } else {
                 let latestHtml = '';
-                const lasUltimas5 = appData.fuels.slice(0, 5);
-                const chronoFuels = [...appData.fuels].sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
-
-                lasUltimas5.forEach(fuel => {
-                    let kmDiff = 0;
-                    let consumptionStr = "1er carga";
-                    let emoji = "🔴";
-
-                    const idx = chronoFuels.findIndex(f => String(f.id) === String(fuel.id));
-                    if (idx > 0) {
-                        kmDiff = fuel.odometer - chronoFuels[idx - 1].odometer;
-                        if (kmDiff > 0 && fuel.liters > 0) {
-                            const consumption = kmDiff / fuel.liters;
-                            consumptionStr = consumption.toFixed(1) + " km/L";
-                            emoji = consumption >= 14 ? "🟢" : (consumption >= 11 ? "🟡" : "🔴");
-                        } else {
-                            consumptionStr = "0.0 km/L";
-                        }
-                    }
-
+                computedFuelsView.slice(0, 5).forEach(fuel => {
+                    let consumptionStr = fuel.calculatedConsumption ? fuel.calculatedConsumption.toFixed(1) + " km/L" : "Iniciando";
+                    let emoji = !fuel.calculatedConsumption ? "🔵" : (fuel.calculatedConsumption >= 13 ? "🟢" : (fuel.calculatedConsumption >= 10 ? "🟡" : "🔴"));
                     latestHtml += `
                         <div class="single-line-fuel" onclick="openEditFuel('${fuel.id}')">
                             <span>${formatDateShort(fuel.date)}</span>
@@ -923,27 +835,21 @@
             // SELECTOR DE MESES
             const monthSelect = document.getElementById('monthSelect');
             const currentSelectedMonth = monthSelect.value || "todos";
-            
             let mesesDisponibles = new Set();
             appData.fuels.forEach(f => {
                 const parts = f.date.split('-');
-                if(parts.length === 3) {
-                    mesesDisponibles.add(`${parts[0]}-${parts[1]}`);
-                }
+                if(parts.length === 3) mesesDisponibles.add(`${parts[0]}-${parts[1]}`);
             });
 
-            let sortedMonths = Array.from(mesesDisponibles).sort((a,b) => new Date(b) - new Date(a));
-            
             let selectHtml = '<option value="todos">Todos los meses</option>';
-            sortedMonths.forEach(m => {
+            Array.from(mesesDisponibles).sort((a,b) => new Date(b) - new Date(a)).forEach(m => {
                 const p = m.split('-');
-                const nombreMes = mesesNombres[parseInt(p[1], 10) - 1] || p[1];
-                selectHtml += `<option value="${m}">${nombreMes} ${p[0]}</option>`;
+                selectHtml += `<option value="${m}">${mesesNombres[parseInt(p[1], 10) - 1]} ${p[0]}</option>`;
             });
             monthSelect.innerHTML = selectHtml;
             monthSelect.value = currentSelectedMonth;
 
-            updateHistoryTabFiltered();
+            updateHistoryTabFiltered(computedFuelsView);
 
             // SERVICIOS
             const servicesContainer = document.getElementById('servicesList');
@@ -951,14 +857,14 @@
                 servicesContainer.innerHTML = `<div class="empty-state-mini">No hay servicios registrados</div>`;
             } else {
                 let sHtml = '';
-                appData.services.forEach(s => {
+                appData.services.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(s => {
                     sHtml += `
                         <div class="service-item-compact" onclick="openEditService('${s.id}')">
-                            <div style="display:flex; flex-direction:column; gap:2px;">
-                                <strong style="font-size:14px; color:#1a1a2e;">🛠️ ${s.type}</strong>
+                            <div>
+                                <strong>🛠️ ${s.type}</strong><br>
                                 <span style="font-size:12px; color:#666;">📅 ${formatDateShort(s.date)} — 📈 ${formatNumber(s.odometer)} km</span>
                             </div>
-                            <span style="font-weight:700; color:#667eea; font-size:14px;">$${formatNumber(s.cost.toFixed(2))}</span>
+                            <span style="font-weight:700; color:#667eea;">$${formatNumber(s.cost.toFixed(2))}</span>
                         </div>
                     `;
                 });
@@ -966,75 +872,22 @@
             }
         }
 
-        function updateHistoryTabFiltered() {
+        function updateHistoryTabFiltered(computedFuelsView) {
             const selectedMonth = document.getElementById('monthSelect').value;
             const historyContainer = document.getElementById('historyList');
             
-            let filteredFuels = appData.fuels;
-            if (selectedMonth !== "todos") {
-                filteredFuels = appData.fuels.filter(f => f.date.startsWith(selectedMonth));
-            }
+            let filteredFuels = selectedMonth === "todos" ? computedFuelsView : computedFuelsView.filter(f => f.date.startsWith(selectedMonth));
 
-            const summaryMonthLabel = document.getElementById('summaryMonth');
-            if (selectedMonth === "todos") {
-                summaryMonthLabel.innerText = "Todos";
-            } else {
-                const p = selectedMonth.split('-');
-                summaryMonthLabel.innerText = mesesNombres[parseInt(p[1], 10) - 1] || p[1];
-            }
+            document.getElementById('summaryMonth').innerText = selectedMonth === "todos" ? "Todos" : mesesNombres[parseInt(selectedMonth.split('-')[1], 10) - 1];
 
-            let mTotalSpent = 0;
-            let mTotalLitersForAvg = 0;
-            let mDistance = 0;
+            let totalSpent = filteredFuels.reduce((sum, f) => sum + f.totalCost, 0);
+            let totalLiters = filteredFuels.reduce((sum, f) => sum + f.liters, 0);
+            document.getElementById('summaryTotal').innerText = `$${formatNumber(totalSpent.toFixed(2))}`;
+            document.getElementById('summaryLiters').innerText = `${totalLiters.toFixed(1)} L`;
 
-            filteredFuels.forEach(f => {
-                mTotalSpent += f.totalCost;
-            });
-
-            const chronoAllFuels = [...appData.fuels].sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
-
-            if (selectedMonth === "todos") {
-                if (chronoAllFuels.length > 1) {
-                    mDistance = chronoAllFuels[chronoAllFuels.length - 1].odometer - chronoAllFuels[0].odometer;
-                    for (let i = 1; i < chronoAllFuels.length; i++) {
-                        mTotalLitersForAvg += chronoAllFuels[i].liters;
-                    }
-                }
-            } else {
-                const sortedMonthFuels = [...filteredFuels].sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
-                if (sortedMonthFuels.length > 0) {
-                    const firstFuelOfMonth = sortedMonthFuels[0];
-                    const lastFuelOfMonth = sortedMonthFuels[sortedMonthFuels.length - 1];
-
-                    const globalIdx = chronoAllFuels.findIndex(f => String(f.id) === String(firstFuelOfMonth.id));
-
-                    if (globalIdx > 0) {
-                        const prevFuelGlobal = chronoAllFuels[globalIdx - 1];
-                        mDistance = lastFuelOfMonth.odometer - prevFuelGlobal.odometer;
-
-                        sortedMonthFuels.forEach(f => {
-                            mTotalLitersForAvg += f.liters;
-                        });
-                    } else {
-                        if (sortedMonthFuels.length > 1) {
-                            mDistance = lastFuelOfMonth.odometer - firstFuelOfMonth.odometer;
-                            for (let i = 1; i < sortedMonthFuels.length; i++) {
-                                mTotalLitersForAvg += sortedMonthFuels[i].liters;
-                            }
-                        }
-                    }
-                }
-            }
-
-            document.getElementById('summaryTotal').innerText = `$${formatNumber(mTotalSpent.toFixed(2))}`;
-            
-            let mTotalLitersDisplay = 0;
-            filteredFuels.forEach(f => mTotalLitersDisplay += f.liters);
-            document.getElementById('summaryLiters').innerText = `${mTotalLitersDisplay.toFixed(1)} L`;
-
-            document.getElementById('summaryAvg').innerText = (mDistance > 0 && mTotalLitersForAvg > 0)
-                ? (mDistance / mTotalLitersForAvg).toFixed(1) + " km/L"
-                : "0.0 km/L";
+            // Muestra el último rendimiento calculado válido en el bloque visualizado
+            let validFuels = filteredFuels.filter(f => f.calculatedConsumption !== null);
+            document.getElementById('summaryAvg').innerText = validFuels.length > 0 ? validFuels[0].calculatedConsumption.toFixed(1) + " km/L" : "0.0 km/L";
 
             if (filteredFuels.length === 0) {
                 historyContainer.innerHTML = `<div class="empty-state-mini">No hay cargas en este periodo</div>`;
@@ -1043,33 +896,16 @@
 
             let html = '';
             filteredFuels.forEach(fuel => {
-                let kmDiff = 0;
-                let display = '1er carga';
-                let cClass = 'badge-none';
-                let emoji = '';
-
-                const idx = chronoAllFuels.findIndex(f => String(f.id) === String(fuel.id));
-                if (idx > 0) {
-                    kmDiff = fuel.odometer - chronoAllFuels[idx - 1].odometer;
-                    if (kmDiff > 0 && fuel.liters > 0) {
-                        const consumption = kmDiff / fuel.liters;
-                        display = consumption.toFixed(1) + ' km/L';
-                        if (consumption >= 14) { cClass = 'badge-good'; emoji = '🟢 '; }
-                        else if (consumption >= 11) { cClass = 'badge-warn'; emoji = '🟡 '; }
-                        else { cClass = 'badge-bad'; emoji = '🔴 '; }
-                    } else {
-                        display = "0.0 km/L";
-                        cClass = 'badge-bad';
-                        emoji = '🔴 ';
-                    }
-                }
+                let display = fuel.calculatedConsumption ? fuel.calculatedConsumption.toFixed(1) + ' km/L' : 'Iniciando';
+                let cClass = !fuel.calculatedConsumption ? 'badge-none' : (fuel.calculatedConsumption >= 13 ? 'badge-good' : (fuel.calculatedConsumption >= 10 ? 'badge-warn' : 'badge-bad'));
+                let emoji = !fuel.calculatedConsumption ? '🔵 ' : (fuel.calculatedConsumption >= 13 ? '🟢 ' : (fuel.calculatedConsumption >= 10 ? '🟡 ' : '🔴 '));
 
                 html += `
                     <div class="history-item-compact" onclick="openEditFuel('${fuel.id}')">
                         <div class="history-row1">
                             <span class="history-date">📅 ${formatDateShort(fuel.date)}</span>
                             <span class="history-km">${formatNumber(fuel.odometer)} km
-                                ${kmDiff > 0 ? `<span class="history-km-diff">(+${formatNumber(kmDiff)} km)</span>` : ''}
+                                ${fuel.kmDiff > 0 ? `<span class="history-km-diff">(+${formatNumber(fuel.kmDiff)} km)</span>` : ''}
                             </span>
                         </div>
                         <div class="history-row2">
@@ -1084,9 +920,10 @@
             historyContainer.innerHTML = html;
         }
 
-        document.getElementById('monthSelect').addEventListener('change', updateHistoryTabFiltered);
+        document.getElementById('monthSelect').addEventListener('change', () => {
+            updateHistoryTabFiltered(calculateProgressiveConsumption([...appData.fuels]).sort((a, b) => new Date(b.date) - new Date(a.date)));
+        });
 
-        // --- CORRECCIÓN EN CÁLCULO EN VIVO (ORDEN CRONOLÓGICO ESTRICTO) ---
         const fOdoInput = document.getElementById('fuelOdometer');
         const fLitersInput = document.getElementById('fuelLiters');
         const fPriceInput = document.getElementById('fuelPrice');
@@ -1098,79 +935,38 @@
             const liters = parseFloat(fLitersInput.value) || 0;
             const price = parseFloat(fPriceInput.value) || 0;
 
-            const total = liters * price;
-            liveTotalLabel.innerText = `$${formatNumber(total.toFixed(2))}`;
+            liveTotalLabel.innerText = `$${formatNumber((liters * price).toFixed(2))}`;
 
             const currentId = document.getElementById('editFuelIndex').value;
-            const currentFormDate = document.getElementById('fuelDate').value;
+            let tempFuels = [...appData.fuels.filter(f => String(f.id) !== String(currentId)), { odometer: odo, liters: liters }];
+            tempFuels.sort((a,b) => a.odometer - b.odometer);
 
-            // Filtrar y ordenar todas las cargas menos la actual
-            const baseFuels = appData.fuels.filter(f => String(f.id) !== String(currentId));
-            
-            // Ordenamos estrictamente por fecha de menor a mayor para buscar hacia atrás de forma limpia
-            const chrono = [...baseFuels].sort((a,b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
+            let totalLiters = tempFuels.reduce((sum, f) => sum + f.liters, 0);
+            let totalKm = tempFuels[tempFuels.length - 1].odometer - tempFuels[0].odometer;
 
-            let prevFuel = null;
-            if (chrono.length > 0) {
-                if (!currentId || !currentFormDate) {
-                    // Si es nueva carga, la anterior es simplemente la última del arreglo cronológico
-                    prevFuel = chrono[chrono.length - 1];
-                } else {
-                    // Si se edita, buscamos la que esté inmediatamente antes por fecha/odómetro
-                    for (let i = chrono.length - 1; i >= 0; i--) {
-                        if (new Date(chrono[i].date) <= new Date(currentFormDate) && chrono[i].odometer < odo) {
-                            prevFuel = chrono[i];
-                            break;
-                        }
-                    }
-                    // Si no la halló con fecha, buscar por el odómetro inmediatamente inferior
-                    if (!prevFuel) {
-                        prevFuel = chrono.filter(f => f.odometer < odo).pop();
-                    }
-                }
-            }
-
-            if (!prevFuel) {
-                liveRendimientoLabel.innerText = "1er carga";
+            if (totalKm <= 0 || tempFuels.length < 2) {
+                liveRendimientoLabel.innerText = "Iniciando";
                 liveRendimientoLabel.className = "rendimiento-value empty";
             } else {
-                const kmDiff = odo - prevFuel.odometer;
-                if (kmDiff <= 0 || liters <= 0) {
-                    liveRendimientoLabel.innerText = "0.0 km/L";
-                    liveRendimientoLabel.className = "rendimiento-value poor";
-                } else {
-                    const consumption = kmDiff / liters;
-                    liveRendimientoLabel.innerText = `${consumption.toFixed(1)} km/L`;
-                    if (consumption >= 14) {
-                        liveRendimientoLabel.className = "rendimiento-value excellent";
-                    } else if (consumption >= 11) {
-                        liveRendimientoLabel.className = "rendimiento-value good";
-                    } else {
-                        liveRendimientoLabel.className = "rendimiento-value poor";
-                    }
-                }
+                let currentAvg = totalKm / totalLiters;
+                liveRendimientoLabel.innerText = `${currentAvg.toFixed(1)} km/L`;
+                liveRendimientoLabel.className = `rendimiento-value ${currentAvg >= 13 ? 'excellent' : (currentAvg >= 10 ? 'good' : 'poor')}`;
             }
         }
 
-        [fOdoInput, fLitersInput, fPriceInput, document.getElementById('fuelDate')].forEach(inp => {
-            inp.addEventListener('input', calculateLiveFuelValues);
-        });
+        [fOdoInput, fLitersInput, fPriceInput].forEach(inp => inp.addEventListener('input', calculateLiveFuelValues));
 
-        // MODALES
         function toggleModal(id, action) {
-            const modal = document.getElementById(id);
-            if (action === 'open') modal.classList.add('active');
-            else modal.classList.remove('active');
+            document.getElementById(id).classList[action === 'open' ? 'add' : 'remove']('active');
         }
 
         document.getElementById('mainOdometer').addEventListener('click', () => {
-            document.getElementById('manualOdoInput').value = appData.manualOdometer !== null ? appData.manualOdometer : '';
+            document.getElementById('manualOdoInput').value = appData.manualOdometer || '';
             toggleModal('odoModal', 'open');
         });
         document.getElementById('btnCancelOdo').addEventListener('click', () => toggleModal('odoModal', 'close'));
         document.getElementById('btnSaveOdo').addEventListener('click', () => {
-            const val = document.getElementById('manualOdoInput').value;
-            appData.manualOdometer = val !== '' ? parseInt(val) : null;
+            appData.manualOdometer = parseInt(document.getElementById('manualOdoInput').value) || null;
             toggleModal('odoModal', 'close');
             saveData();
         });
@@ -1181,8 +977,7 @@
         });
         document.getElementById('btnCancelCar').addEventListener('click', () => toggleModal('carModal', 'close'));
         document.getElementById('btnSaveCar').addEventListener('click', () => {
-            const name = document.getElementById('carNameInput').value.trim();
-            if (name) appData.carName = name;
+            appData.carName = document.getElementById('carNameInput').value.trim() || 'Mi Vehículo';
             toggleModal('carModal', 'close');
             saveData();
         });
@@ -1199,22 +994,14 @@
             } else {
                 document.getElementById('fuelForm').reset();
                 document.getElementById('editFuelIndex').value = '';
-                document.getElementById('fuelModalTitle').innerText = '⛽ Nueva carga';
+                document.getElementById('fuelModalTitle').innerText = '⛽ Nueva Carga';
                 document.getElementById('fuelDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('deleteFuelBtn').style.display = 'none';
                 
-                fLitersInput.value = 38;
-
                 if (appData.fuels.length > 0) {
-                    const chrono = [...appData.fuels].sort((a,b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
-                    const last = chrono[chrono.length - 1];
-                    fOdoInput.value = last.odometer;
-                    fPriceInput.value = last.pricePerLiter;
-                } else {
-                    fOdoInput.value = '';
-                    fPriceInput.value = '';
+                    fOdoInput.value = appData.fuels[appData.fuels.length - 1].odometer;
+                    fPriceInput.value = appData.fuels[appData.fuels.length - 1].pricePerLiter;
                 }
-
                 toggleModal('fuelModal', 'open');
                 calculateLiveFuelValues();
             }
@@ -1230,17 +1017,12 @@
             const liters = parseFloat(fLitersInput.value);
             const price = parseFloat(fPriceInput.value);
             const date = document.getElementById('fuelDate').value;
-            const totalCost = liters * price;
 
-            if (id && id.trim() !== "") {
+            if (id) {
                 let f = appData.fuels.find(x => String(x.id) === String(id));
-                if (f) {
-                    f.odometer = odo; f.liters = liters; f.pricePerLiter = price; f.date = date; f.totalCost = totalCost;
-                }
+                if (f) { f.odometer = odo; f.liters = liters; f.pricePerLiter = price; f.date = date; f.totalCost = liters * price; }
             } else {
-                appData.fuels.push({
-                    id: 'f_' + Date.now(), odometer: odo, liters: liters, pricePerLiter: price, date: date, totalCost: totalCost
-                });
+                appData.fuels.push({ id: 'f_' + Date.now(), odometer: odo, liters: liters, pricePerLiter: price, date: date, totalCost: liters * price });
             }
             toggleModal('fuelModal', 'close');
             saveData();
@@ -1254,15 +1036,11 @@
             const cost = parseFloat(document.getElementById('serviceCost').value);
             const date = document.getElementById('serviceDate').value;
 
-            if (id && id.trim() !== "") {
+            if (id) {
                 let s = appData.services.find(x => String(x.id) === String(id));
-                if (s) {
-                    s.type = type; s.odometer = odo; s.cost = cost; s.date = date;
-                }
+                if (s) { s.type = type; s.odometer = odo; s.cost = cost; s.date = date; }
             } else {
-                appData.services.push({
-                    id: 's_' + Date.now(), type: type, odometer: odo, cost: cost, date: date
-                });
+                appData.services.push({ id: 's_' + Date.now(), type: type, odometer: odo, cost: cost, date: date });
             }
             toggleModal('serviceModal', 'close');
             saveData();
@@ -1272,20 +1050,16 @@
             let f = appData.fuels.find(x => String(x.id) === String(id));
             if (!f) return;
             document.getElementById('editFuelIndex').value = f.id;
-            fOdoInput.value = f.odometer;
-            fLitersInput.value = f.liters;
-            fPriceInput.value = f.pricePerLiter;
+            fOdoInput.value = f.odometer; fLitersInput.value = f.liters; fPriceInput.value = f.pricePerLiter;
             document.getElementById('fuelDate').value = f.date;
-            document.getElementById('fuelModalTitle').innerText = '⛽ Editar Carga';
             document.getElementById('deleteFuelBtn').style.display = 'block';
             toggleModal('fuelModal', 'open');
             calculateLiveFuelValues();
         }
 
         document.getElementById('deleteFuelBtn').addEventListener('click', () => {
-            const id = document.getElementById('editFuelIndex').value;
-            if (id && confirm('¿Eliminar este registro de carga?')) {
-                appData.fuels = appData.fuels.filter(x => String(x.id) !== String(id));
+            if (confirm('¿Eliminar este registro?')) {
+                appData.fuels = appData.fuels.filter(x => String(x.id) !== String(document.getElementById('editFuelIndex').value));
                 toggleModal('fuelModal', 'close');
                 saveData();
             }
@@ -1299,15 +1073,13 @@
             document.getElementById('serviceOdometer').value = s.odometer;
             document.getElementById('serviceCost').value = s.cost;
             document.getElementById('serviceDate').value = s.date;
-            document.getElementById('serviceModalTitle').innerText = '🛠️ Editar Servicio';
             document.getElementById('deleteServiceBtn').style.display = 'block';
             toggleModal('serviceModal', 'open');
         }
 
         document.getElementById('deleteServiceBtn').addEventListener('click', () => {
-            const id = document.getElementById('editServiceIndex').value;
-            if (id && confirm('¿Eliminar este registro de servicio?')) {
-                appData.services = appData.services.filter(x => String(x.id) !== String(id));
+            if (confirm('¿Eliminar este servicio?')) {
+                appData.services = appData.services.filter(x => String(x.id) !== String(document.getElementById('editServiceIndex').value));
                 toggleModal('serviceModal', 'close');
                 saveData();
             }
@@ -1315,43 +1087,25 @@
 
         const menuBtn = document.getElementById('menuBtn');
         const menuDropdown = document.getElementById('menuDropdown');
-        menuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block';
-        });
+        menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block'; });
         document.addEventListener('click', () => menuDropdown.style.display = 'none');
 
         document.getElementById('btnExport').addEventListener('click', () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "gasapp_backup.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "gasapp_backup.json"); dl.click();
         });
 
         document.getElementById('btnImport').addEventListener('click', () => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
+            const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
             input.onchange = e => {
                 const file = e.target.files[0];
                 const reader = new FileReader();
-                reader.onload = readerEvent => {
+                reader.onload = re => {
                     try {
-                        const parsed = JSON.parse(readerEvent.target.result);
-                        if (parsed && (parsed.fuels || parsed.services || parsed.carName)) {
-                            appData = parsed;
-                            if(!appData.fuels) appData.fuels = [];
-                            if(!appData.services) appData.services = [];
-                            if(appData.manualOdometer === undefined) appData.manualOdometer = null;
-                            saveData();
-                            alert('Datos importados correctamente ✅');
-                        }
-                    } catch(err) {
-                        alert('Archivo JSON no válido');
-                    }
+                        appData = JSON.parse(re.target.result);
+                        saveData();
+                        alert('Datos importados correctamente ✅');
+                    } catch(err) { alert('JSON no válido'); }
                 }
                 reader.readAsText(file);
             }
@@ -1360,27 +1114,18 @@
 
         const navItems = document.querySelectorAll('.nav-item');
         const tabContents = document.querySelectorAll('.tab-content');
-        const appTitle = document.getElementById('appTitle');
-
         navItems.forEach(item => {
             item.addEventListener('click', () => {
                 navItems.forEach(i => i.classList.remove('active'));
                 tabContents.forEach(tc => tc.classList.remove('active'));
-
                 item.classList.add('active');
                 currentTab = item.getAttribute('data-tab');
                 document.getElementById(`tab-${currentTab}`).classList.add('active');
-
-                if (currentTab === 'inicio') appTitle.innerText = "Resumen";
-                else if (currentTab === 'historial') appTitle.innerText = "Historial";
-                else if (currentTab === 'servicios') appTitle.innerText = "Servicios";
+                document.getElementById('appTitle').innerText = currentTab === 'inicio' ? "Resumen" : (currentTab === 'historial' ? "Historial" : "Servicios");
             });
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            updateUI();
-        });
+        window.addEventListener('DOMContentLoaded', () => { loadData(); updateUI(); });
     </script>
 </body>
 </html>

@@ -274,7 +274,7 @@
             color: #1a1a2e;
         }
 
-        /* Selector de mes estilizado */
+        /* Selector de mes */
         .month-select-container {
             margin-bottom: 10px;
             display: flex;
@@ -362,7 +362,7 @@
         .badge-bad { background: #fce8e6; color: #c5221f; }
         .badge-none { background: #f1f3f4; color: #5f6368; }
 
-        /* Formato de línea única resumida para las cargas de inicio */
+        /* Formato de línea única resumida */
         .latest-fuels-list {
             display: flex;
             flex-direction: column;
@@ -431,23 +431,6 @@
             font-weight: 700;
             margin-bottom: 14px;
             text-align: center;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 16px;
-            text-align: center;
-            margin-bottom: 16px;
-            background: white;
-            color: #1a1a2e;
-        }
-
-        .modal-input:focus {
-            border-color: #667eea;
-            outline: none;
         }
 
         .field-group {
@@ -838,7 +821,6 @@
     </div>
 
     <script>
-        // --- Estado General ---
         let appData = {
             carName: 'Mi Vehículo',
             manualOdometer: null,
@@ -884,17 +866,14 @@
             return dateStr;
         }
 
-        // --- Actualización de la Interfaz ---
         function updateUI() {
-            // Ordenar cargas de más RECIENTE a más ANTIGUA antes de pintar cualquier cosa
-            appData.fuels.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // ORDEN ESTABLECIDO: de más NUEVA a más VIEJA para visualización estable
+            appData.fuels.sort((a, b) => new Date(b.date) - new Date(a.date) || b.odometer - a.odometer);
             appData.services.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            // Nombre del Coche
             document.getElementById('carNameDisplay').innerText = appData.carName;
             document.getElementById('appSubtitle').innerText = appData.carName.toUpperCase();
             
-            // Lógica del Odómetro Principal
             let displayedOdo = 0;
             if (appData.manualOdometer !== null && appData.manualOdometer !== '') {
                 displayedOdo = parseInt(appData.manualOdometer);
@@ -903,14 +882,14 @@
             }
             document.getElementById('mainOdometer').innerText = formatNumber(displayedOdo);
 
-            // --- CONTENEDOR LAS ÚLTIMAS 5 CARGAS (PANTALLA DE INICIO) ---
+            // ÚLTIMAS 5 CARGAS (INICIO)
             const latestContainer = document.getElementById('latestFuelContainer');
             if (appData.fuels.length === 0) {
                 latestContainer.innerHTML = `<div class="empty-state-mini">No hay registros de combustible</div>`;
             } else {
                 let latestHtml = '';
                 const lasUltimas5 = appData.fuels.slice(0, 5);
-                const chronoFuels = [...appData.fuels].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const chronoFuels = [...appData.fuels].sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
 
                 lasUltimas5.forEach(fuel => {
                     let kmDiff = 0;
@@ -941,7 +920,7 @@
                 latestContainer.innerHTML = latestHtml;
             }
 
-            // --- LLENAR EL SELECTOR DE MESES EN HISTORIAL ---
+            // SELECTOR DE MESES
             const monthSelect = document.getElementById('monthSelect');
             const currentSelectedMonth = monthSelect.value || "todos";
             
@@ -966,7 +945,7 @@
 
             updateHistoryTabFiltered();
 
-            // --- CONTENEDOR SERVICIOS ---
+            // SERVICIOS
             const servicesContainer = document.getElementById('servicesList');
             if (appData.services.length === 0) {
                 servicesContainer.innerHTML = `<div class="empty-state-mini">No hay servicios registrados</div>`;
@@ -987,7 +966,6 @@
             }
         }
 
-        // --- FILTRADO DEL HISTORIAL Y CÁLCULO MENSUAL EXACTO ---
         function updateHistoryTabFiltered() {
             const selectedMonth = document.getElementById('monthSelect').value;
             const historyContainer = document.getElementById('historyList');
@@ -1013,7 +991,7 @@
                 mTotalSpent += f.totalCost;
             });
 
-            const chronoAllFuels = [...appData.fuels].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const chronoAllFuels = [...appData.fuels].sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
 
             if (selectedMonth === "todos") {
                 if (chronoAllFuels.length > 1) {
@@ -1023,7 +1001,7 @@
                     }
                 }
             } else {
-                const sortedMonthFuels = [...filteredFuels].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const sortedMonthFuels = [...filteredFuels].sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
                 if (sortedMonthFuels.length > 0) {
                     const firstFuelOfMonth = sortedMonthFuels[0];
                     const lastFuelOfMonth = sortedMonthFuels[sortedMonthFuels.length - 1];
@@ -1108,7 +1086,7 @@
 
         document.getElementById('monthSelect').addEventListener('change', updateHistoryTabFiltered);
 
-        // --- CÁLCULOS INTERACTIVOS EN VIVO DENTRO DEL MODAL ---
+        // --- CORRECCIÓN EN CÁLCULO EN VIVO (ORDEN CRONOLÓGICO ESTRICTO) ---
         const fOdoInput = document.getElementById('fuelOdometer');
         const fLitersInput = document.getElementById('fuelLiters');
         const fPriceInput = document.getElementById('fuelPrice');
@@ -1124,19 +1102,30 @@
             liveTotalLabel.innerText = `$${formatNumber(total.toFixed(2))}`;
 
             const currentId = document.getElementById('editFuelIndex').value;
+            const currentFormDate = document.getElementById('fuelDate').value;
+
+            // Filtrar y ordenar todas las cargas menos la actual
             const baseFuels = appData.fuels.filter(f => String(f.id) !== String(currentId));
-            const chrono = [...baseFuels].sort((a,b) => new Date(a.date) - new Date(b.date));
+            
+            // Ordenamos estrictamente por fecha de menor a mayor para buscar hacia atrás de forma limpia
+            const chrono = [...baseFuels].sort((a,b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
 
             let prevFuel = null;
             if (chrono.length > 0) {
-                if (!currentId) {
+                if (!currentId || !currentFormDate) {
+                    // Si es nueva carga, la anterior es simplemente la última del arreglo cronológico
                     prevFuel = chrono[chrono.length - 1];
                 } else {
-                    for(let i = chrono.length - 1; i >= 0; i--) {
-                        if(chrono[i].odometer < odo) {
+                    // Si se edita, buscamos la que esté inmediatamente antes por fecha/odómetro
+                    for (let i = chrono.length - 1; i >= 0; i--) {
+                        if (new Date(chrono[i].date) <= new Date(currentFormDate) && chrono[i].odometer < odo) {
                             prevFuel = chrono[i];
                             break;
                         }
+                    }
+                    // Si no la halló con fecha, buscar por el odómetro inmediatamente inferior
+                    if (!prevFuel) {
+                        prevFuel = chrono.filter(f => f.odometer < odo).pop();
                     }
                 }
             }
@@ -1163,18 +1152,17 @@
             }
         }
 
-        [fOdoInput, fLitersInput, fPriceInput].forEach(inp => {
+        [fOdoInput, fLitersInput, fPriceInput, document.getElementById('fuelDate')].forEach(inp => {
             inp.addEventListener('input', calculateLiveFuelValues);
         });
 
-        // --- GESTIÓN DE MODALES ---
+        // MODALES
         function toggleModal(id, action) {
             const modal = document.getElementById(id);
             if (action === 'open') modal.classList.add('active');
             else modal.classList.remove('active');
         }
 
-        // --- EDICIÓN DIRECTA DE ODÓMETRO Y NOMBRE ---
         document.getElementById('mainOdometer').addEventListener('click', () => {
             document.getElementById('manualOdoInput').value = appData.manualOdometer !== null ? appData.manualOdometer : '';
             toggleModal('odoModal', 'open');
@@ -1199,7 +1187,6 @@
             saveData();
         });
 
-        // --- DISPARADOR DEL BOTÓN FLOTANTE (FAB) ---
         let currentTab = 'inicio';
         document.getElementById('fabBtn').addEventListener('click', () => {
             if (currentTab === 'servicios') {
@@ -1219,7 +1206,7 @@
                 fLitersInput.value = 38;
 
                 if (appData.fuels.length > 0) {
-                    const chrono = [...appData.fuels].sort((a,b) => new Date(a.date) - new Date(b.date));
+                    const chrono = [...appData.fuels].sort((a,b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
                     const last = chrono[chrono.length - 1];
                     fOdoInput.value = last.odometer;
                     fPriceInput.value = last.pricePerLiter;
@@ -1236,7 +1223,6 @@
         document.getElementById('btnCancelFuel').addEventListener('click', () => toggleModal('fuelModal', 'close'));
         document.getElementById('btnCancelService').addEventListener('click', () => toggleModal('serviceModal', 'close'));
 
-        // --- GUARDADO CORREGIDO DE REGISTROS COMBUSTIBLE ---
         document.getElementById('fuelForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('editFuelIndex').value;
@@ -1249,11 +1235,7 @@
             if (id && id.trim() !== "") {
                 let f = appData.fuels.find(x => String(x.id) === String(id));
                 if (f) {
-                    f.odometer = odo; 
-                    f.liters = liters; 
-                    f.pricePerLiter = price; 
-                    f.date = date; 
-                    f.totalCost = totalCost;
+                    f.odometer = odo; f.liters = liters; f.pricePerLiter = price; f.date = date; f.totalCost = totalCost;
                 }
             } else {
                 appData.fuels.push({
@@ -1286,7 +1268,6 @@
             saveData();
         });
 
-        // --- GESTIÓN DE EDICIÓN Y ELIMINACIÓN ---
         function openEditFuel(id) {
             let f = appData.fuels.find(x => String(x.id) === String(id));
             if (!f) return;
@@ -1332,7 +1313,6 @@
             }
         });
 
-        // --- MENÚ DESPLEGABLE ---
         const menuBtn = document.getElementById('menuBtn');
         const menuDropdown = document.getElementById('menuDropdown');
         menuBtn.addEventListener('click', (e) => {
@@ -1341,7 +1321,6 @@
         });
         document.addEventListener('click', () => menuDropdown.style.display = 'none');
 
-        // --- RESPALDOS JSON ---
         document.getElementById('btnExport').addEventListener('click', () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
             const downloadAnchor = document.createElement('a');
@@ -1379,7 +1358,6 @@
             input.click();
         });
 
-        // --- NAVEGACIÓN ENTRE PESTAÑAS (TABS) ---
         const navItems = document.querySelectorAll('.nav-item');
         const tabContents = document.querySelectorAll('.tab-content');
         const appTitle = document.getElementById('appTitle');
@@ -1399,11 +1377,9 @@
             });
         });
 
-        // --- CARGA INICIAL ---
         window.addEventListener('DOMContentLoaded', () => {
             loadData();
             updateUI();
-            console.log('GasApp cargado correctamente ✅');
         });
     </script>
 </body>

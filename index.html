@@ -3,546 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GasApp</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="GasApp">
-    <meta name="mobile-web-app-capable" content="yes">
-
+    <title>GasApp Pro</title>
     <style>
-        /* ===== RESET ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; appearance: none; }
+        body { background: #f5f7fa; color: #1a1a2e; font-size: 14px; line-height: 1.4; height: 100vh; overflow: hidden; }
+        .app { max-width: 480px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; position: relative; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c1c7cd; border-radius: 10px; }
 
-        input[type=number]::-webkit-outer-spin-button,
-        input[type=number]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-            appearance: none;
-        }
+        .header-mini { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; flex-shrink: 0; z-index: 10; border-radius: 0 0 20px 20px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); position: relative; display: flex; justify-content: center; align-items: center; min-height: 70px; }
+        .header-content { text-align: center; padding: 8px 16px; }
+        .app-name { font-size: 13px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.9; display: block; line-height: 1.2; }
+        .header-title { font-size: 18px; font-weight: 700; letter-spacing: 0.3px; display: block; line-height: 1.3; margin-top: -2px; }
 
-        body {
-            background: #f5f7fa;
-            color: #1a1a2e;
-            font-size: 14px;
-            line-height: 1.4;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .app {
-            max-width: 480px;
-            margin: 0 auto;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        ::-webkit-scrollbar {
-            width: 3px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c1c7cd;
-            border-radius: 10px;
-        }
-
-        /* ===== HEADER ===== */
-        .header-mini {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 0;
-            color: white;
-            flex-shrink: 0;
-            z-index: 10;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 70px;
-        }
-
-        .header-content {
-            text-align: center;
-            padding: 8px 16px;
-        }
-
-        .app-name {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            opacity: 0.9;
-            display: block;
-            line-height: 1.2;
-        }
-
-        .header-title {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            display: block;
-            line-height: 1.3;
-            margin-top: -2px;
-        }
-
-        /* ===== BOTÓN MENU ===== */
-        .btn-menu {
-            position: fixed;
-            top: 18px;
-            right: calc(50% - 200px);
-            background: none;
-            border: none;
-            color: white;
-            font-size: 22px;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 4px 8px;
-            z-index: 9999;
-            user-select: none;
-            transition: transform 0.15s;
-        }
-
-        @media (max-width: 480px) {
-            .btn-menu { right: 16px; }
-        }
-
-        .btn-menu:active { transform: scale(0.85); }
-
-        .menu-dropdown {
-            position: fixed;
-            top: 58px;
-            right: calc(50% - 200px);
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            padding: 4px 0;
-            min-width: 110px;
-            z-index: 9999;
-            display: none;
-            overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        @media (max-width: 480px) {
-            .menu-dropdown { right: 16px; }
-        }
-
-        .menu-dropdown .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 12px;
-            font-size: 12px;
-            color: #333;
-            cursor: pointer;
-            transition: background 0.15s;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: center;
-            font-weight: 500;
-        }
-
+        .btn-menu { position: fixed; top: 18px; right: calc(50% - 200px); background: none; border: none; color: white; font-size: 22px; font-weight: 700; cursor: pointer; padding: 4px 8px; z-index: 9999; transition: transform 0.15s; }
+        @media (max-width: 480px) { .btn-menu { right: 16px; } }
+        .menu-dropdown { position: fixed; top: 58px; right: calc(50% - 200px); background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); padding: 4px 0; min-width: 110px; z-index: 9999; display: none; border: 1px solid rgba(0, 0, 0, 0.05); }
+        @media (max-width: 480px) { .menu-dropdown { right: 16px; } }
+        .menu-dropdown .menu-item { display: flex; align-items: center; justify-content: center; padding: 8px 12px; font-size: 12px; color: #333; cursor: pointer; border: none; background: none; width: 100%; font-weight: 500; }
         .menu-dropdown .menu-item:hover { background: #f0f2f5; }
 
-        /* ===== CONTENEDORES ===== */
-        .inicio-header {
-            background: white;
-            border-radius: 16px;
-            padding: 14px 18px 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            color: #1a1a2e;
-            text-align: center;
-        }
+        .inicio-header { background: white; border-radius: 16px; padding: 14px 18px 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); text-align: center; }
+        .car-name-row { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 4px; }
+        .car-name { font-size: 16px; font-weight: 600; }
+        .inicio-header .odometer-row { display: flex; justify-content: center; align-items: center; gap: 4px; }
+        .inicio-header .odo-value { font-size: 32px; font-weight: 700; cursor: pointer; }
+        .inicio-header .odo-unit { font-size: 14px; color: #888; }
 
-        .car-name-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 4px;
-        }
+        .history-grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+        .history-summary-card { background: white; border-radius: 10px; padding: 8px 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .h-card-title { font-size: 10px; text-transform: uppercase; color: #999; font-weight: 600; margin-bottom: 2px; }
+        .h-card-value { font-size: 14px; font-weight: 700; }
 
-        .car-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1a1a2e;
-        }
+        .month-select-container { margin-bottom: 10px; display: flex; justify-content: center; }
+        .month-select { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 13px; font-weight: 600; color: #444; background: white; outline: none; }
 
-        .inicio-header .odometer-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .inicio-header .odo-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1a1a2e;
-            cursor: pointer;
-        }
-
-        .inicio-header .odo-unit {
-            font-size: 14px;
-            color: #888;
-        }
-
-        /* ===== RENDIMIENTO CARDS ===== */
-        .history-grid-4 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 10px;
-        }
-
-        .history-summary-card {
-            background: white;
-            border-radius: 10px;
-            padding: 8px 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .h-card-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #999;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .h-card-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-
-        .month-select-container {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .month-select {
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            font-size: 13px;
-            font-weight: 600;
-            color: #444;
-            background: white;
-            outline: none;
-            cursor: pointer;
-        }
-
-        /* ===== LISTAS ===== */
-        .history-list-compact {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .history-item-compact {
-            background: white;
-            border-radius: 10px;
-            padding: 10px 14px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            cursor: pointer;
-        }
-
-        .history-row1 {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2px;
-        }
-
-        .history-date {
-            font-size: 13px;
-            font-weight: 500;
-            color: #444;
-        }
-
-        .history-km {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a2e;
-        }
-
-        .history-km-diff {
-            font-size: 12px;
-            color: #10b981;
-            font-weight: 500;
-            margin-left: 4px;
-        }
-
-        .history-row2 {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            color: #666;
-            margin-top: 2px;
-        }
-
-        .history-consumption-badge {
-            font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
+        .history-list-compact { display: flex; flex-direction: column; gap: 6px; }
+        .history-item-compact { background: white; border-radius: 10px; padding: 10px 14px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04); cursor: pointer; }
+        .history-row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+        .history-date { font-size: 13px; font-weight: 500; color: #444; }
+        .history-km { font-size: 14px; font-weight: 600; }
+        .history-km-diff { font-size: 12px; color: #10 b981; font-weight: 500; margin-left: 4px; }
+        .history-row2 { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; font-size: 13px; color: #666; margin-top: 2px; }
+        .history-consumption-badge { font-weight: 600; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
 
         .badge-good { background: #e6f4ea; color: #137333; }
         .badge-warn { background: #fef7e0; color: #b06000; }
         .badge-bad { background: #fce8e6; color: #c5221f; }
         .badge-none { background: #f1f3f4; color: #5f6368; }
 
-        .latest-fuels-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: 6px;
-        }
+        .latest-fuels-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+        .single-line-fuel { background: white; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 
-        .single-line-fuel {
-            background: white;
-            border-radius: 10px;
-            padding: 10px 14px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-            font-size: 13px;
-            font-weight: 500;
-            color: #333;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: white; border-radius: 16px; padding: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; text-align: center; }
+        .field-group { margin-bottom: 12px; }
+        .field-group label { display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 4px; }
+        .field-group input { width: 100%; padding: 10px 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #fafafa; }
 
-        /* ===== MODALES ===== */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            padding: 16px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-
-        .modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        .modal-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            text-align: center;
-        }
-
-        .field-group {
-            margin-bottom: 12px;
-        }
-
-        .field-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #666;
-            margin-bottom: 4px;
-        }
-
-        .field-group input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 14px;
-            background: #fafafa;
-        }
-
-        .rendimiento-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f8f9fb;
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-top: 10px;
-            border: 1px dashed #cbd5e1;
-        }
-
-        .rendimiento-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #4a5568;
-        }
-
-        .rendimiento-value {
-            font-size: 14px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 12px;
-        }
-
-        .excellent { background: #e6f4ea; color: #137333; }
-        .good { background: #fef7e0; color: #b06000; }
-        .poor { background: #fce8e6; color: #c5221f; }
-        .empty { background: #e2e8f0; color: #475569; }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 18px;
-        }
-
-        .btn-modal {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
+        .modal-buttons { display: flex; gap: 10px; margin-top: 18px; }
+        .btn-modal { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .btn-modal-primary { background: #667eea; color: white; }
         .btn-modal-secondary { background: #f0f2f5; color: #4b5563; }
+        .btn-fab { position: fixed; bottom: 76px; right: calc(50% - 220px); width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 50%; font-size: 24px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); z-index: 999; }
+        @media (max-width: 480px) { .btn-fab { right: 20px; } }
 
-        .btn-fab {
-            position: fixed;
-            bottom: 76px;
-            right: calc(50% - 220px);
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-            cursor: pointer;
-            z-index: 999;
-        }
-
-        @media (max-width: 480px) {
-            .btn-fab { right: 20px; }
-        }
-
-        .tab-content {
-            display: none;
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px 16px 20px;
-        }
-
+        .tab-content { display: none; flex: 1; overflow-y: auto; padding: 12px 16px 20px; }
         .tab-content.active { display: block; }
-
-        .service-list-compact {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .service-item-compact {
-            background: white;
-            border-radius: 10px;
-            padding: 10px 14px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .section-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .nav-bar {
-            background: white;
-            height: 60px;
-            flex-shrink: 0;
-            display: flex;
-            box-shadow: 0 -3px 10px rgba(0,0,0,0.05);
-            border-top: 1px solid rgba(0,0,0,0.05);
-            z-index: 10;
-        }
-
-        .nav-bar .nav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #888;
-            cursor: pointer;
-            gap: 2px;
-        }
-
-        .nav-bar .nav-item.active {
-            color: #667eea;
-            font-weight: 600;
-        }
-
+        .section-label { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .nav-bar { background: white; height: 60px; flex-shrink: 0; display: flex; box-shadow: 0 -3px 10px rgba(0,0,0,0.05); border-top: 1px solid rgba(0,0,0,0.05); z-index: 10; }
+        .nav-bar .nav-item { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #888; cursor: pointer; gap: 2px; }
+        .nav-bar .nav-item.active { color: #667eea; font-weight: 600; }
         .nav-icon { font-size: 18px; }
         .nav-label { font-size: 11px; }
-
-        .empty-state-mini {
-            text-align: center;
-            color: #999;
-            padding: 30px 10px;
-            font-size: 13px;
-        }
+        .empty-state-mini { text-align: center; color: #999; padding: 30px 10px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -570,182 +109,75 @@
                     <span class="odo-unit">km</span>
                 </div>
             </div>
-
             <div class="section-label" style="padding: 0 4px;">Últimas Cargas Recientes</div>
-            <div class="latest-fuels-list" id="latestFuelContainer">
-                <div class="empty-state-mini">No hay registros de combustible</div>
-            </div>
+            <div class="latest-fuels-list" id="latestFuelContainer"></div>
         </div>
 
         <div id="tab-historial" class="tab-content">
             <div class="month-select-container">
-                <select id="monthSelect" class="month-select">
-                    <option value="todos">Todos los meses</option>
-                </select>
+                <select id="monthSelect" class="month-select"><option value="todos">Todos los meses</option></select>
             </div>
-
             <div class="history-grid-4">
-                <div class="history-summary-card">
-                    <span class="h-card-title">Mes</span>
-                    <span class="h-card-value" id="summaryMonth">-</span>
-                </div>
-                <div class="history-summary-card">
-                    <span class="h-card-title">Gastos</span>
-                    <span class="h-card-value" id="summaryTotal">$0.00</span>
-                </div>
-                <div class="history-summary-card">
-                    <span class="h-card-title">Litros</span>
-                    <span class="h-card-value" id="summaryLiters">0.0 L</span>
-                </div>
-                <div class="history-summary-card">
-                    <span class="h-card-title">Rendimiento</span>
-                    <span class="h-card-value" id="summaryAvg">0.0 km/L</span>
-                </div>
+                <!-- TARJETA ACTUALIZADA: AHORA DESPLIEGA KM RECORRIDOS -->
+                <div class="history-summary-card"><span class="h-card-title">Km Recorridos</span><span class="h-card-value" id="summaryKm">0 km</span></div>
+                <div class="history-summary-card"><span class="h-card-title">Gastos</span><span class="h-card-value" id="summaryTotal">$0.00</span></div>
+                <div class="history-summary-card"><span class="h-card-title">Litros</span><span class="h-card-value" id="summaryLiters">0.0 L</span></div>
+                <div class="history-summary-card"><span class="h-card-title">Rendimiento</span><span class="h-card-value" id="summaryAvg">0.0 km/L</span></div>
             </div>
-
-            <div class="section-label" style="margin-bottom:8px;">Historial de Cargas</div>
-            <div class="history-list-compact" id="historyList">
-                <div class="empty-state-mini">No hay cargas registradas</div>
-            </div>
+            <div class="section-label">Historial de Cargas</div>
+            <div class="history-list-compact" id="historyList"></div>
         </div>
 
         <div id="tab-servicios" class="tab-content">
-            <div class="section-label">Historial de Servicios Realizados</div>
-            <div class="service-list-compact" id="servicesList">
-                <div class="empty-state-mini">No hay servicios registrados</div>
-            </div>
+            <div class="section-label">Historial de Servicios</div>
+            <div class="history-list-compact" id="servicesList"></div>
         </div>
 
         <button class="btn-fab" id="fabBtn">+</button>
 
         <nav class="nav-bar">
-            <div class="nav-item active" data-tab="inicio">
-                <span class="nav-icon">📊</span>
-                <span class="nav-label">Resumen</span>
-            </div>
-            <div class="nav-item" data-tab="historial">
-                <span class="nav-icon">📅</span>
-                <span class="nav-label">Historial</span>
-            </div>
-            <div class="nav-item" data-tab="servicios">
-                <span class="nav-icon">🛠️</span>
-                <span class="nav-label">Servicios</span>
-            </div>
+            <div class="nav-item active" data-tab="inicio"><span class="nav-icon">📊</span><span class="nav-label">Resumen</span></div>
+            <div class="nav-item" data-tab="historial"><span class="nav-icon">📅</span><span class="nav-label">Historial</span></div>
+            <div class="nav-item" data-tab="servicios"><span class="nav-icon">🛠️</span><span class="nav-label">Servicios</span></div>
         </nav>
     </div>
 
-    <!-- MODAL: AGREGAR CARGA -->
+    <!-- MODAL Combustible -->
     <div class="modal" id="fuelModal">
         <div class="modal-content">
-            <div class="modal-title" id="fuelModalTitle">Nueva Carga de Combustible</div>
+            <div class="modal-title" id="fuelModalTitle">Nueva Carga</div>
             <form id="fuelForm" onsubmit="return false;">
                 <input type="hidden" id="editFuelIndex">
-                
                 <div class="field-group">
                     <label>Kilometraje Actual (km)</label>
-                    <input type="number" id="fuelOdometer" step="1" required placeholder="Ej. 179652">
+                    <input type="number" id="fuelOdometer" required>
                 </div>
                 <div class="field-group">
                     <label>Litros Cargados (L)</label>
-                    <input type="number" id="fuelLiters" step="0.01" required placeholder="Ej. 15">
+                    <input type="number" id="fuelLiters" step="0.01" required>
                 </div>
                 <div class="field-group">
                     <label>Precio por Litro ($)</label>
-                    <input type="number" id="fuelPrice" step="0.01" required placeholder="Ej. 23.66">
+                    <input type="number" id="fuelPrice" step="0.01" required>
                 </div>
                 <div class="field-group">
                     <label>Fecha</label>
                     <input type="date" id="fuelDate" required>
                 </div>
-
-                <div class="rendimiento-box">
-                    <span class="rendimiento-label">Rendimiento Estimado:</span>
-                    <span class="rendimiento-value empty" id="liveRendimiento">Calculando...</span>
+                <div style="text-align:right; margin-top:8px; margin-bottom: 12px;">
+                    <span style="font-size:12px; color:#666;">Total: </span><span id="liveTotal" style="font-weight:700;">$0.00</span>
                 </div>
-
-                <div class="field-group" style="margin-top:12px; margin-bottom:0px; text-align:right;">
-                    <span style="font-size:12px; font-weight:600; color:#666;">Costo Total: </span>
-                    <span id="liveTotal" style="font-size:15px; font-weight:700; color:#1a1a2e;">$0.00</span>
-                </div>
-
                 <div class="modal-buttons">
                     <button type="button" class="btn-modal btn-modal-secondary" id="btnCancelFuel">Cancelar</button>
-                    <button type="submit" class="btn-modal btn-modal-primary" id="btnSaveFuel">Guardar</button>
+                    <button type="submit" class="btn-modal btn-modal-primary">Guardar</button>
                 </div>
-                <button type="button" id="deleteFuelBtn" class="btn-modal btn-modal-secondary" style="width:100%; margin-top:10px; color:#c5221f; display:none; background:#fce8e6;">Eliminar Registro</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: CONFIGURACIÓN VEHÍCULO -->
-    <div class="modal" id="carModal">
-        <div class="modal-content">
-            <div class="modal-title">Configuración del Vehículo</div>
-            <div class="field-group">
-                <label>Nombre del Vehículo</label>
-                <input type="text" id="carNameInput">
-            </div>
-            <div class="modal-buttons">
-                <button type="button" class="btn-modal btn-modal-secondary" id="btnCancelCar">Cancelar</button>
-                <button type="button" class="btn-modal btn-modal-primary" id="btnSaveCar">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: ACTUALIZAR ODÓMETRO MANUAL -->
-    <div class="modal" id="odoModal">
-        <div class="modal-content">
-            <div class="modal-title">Actualizar Odómetro Manual</div>
-            <div class="field-group">
-                <label>Kilometraje del Vehículo (km)</label>
-                <input type="number" id="manualOdoInput" step="1">
-            </div>
-            <div class="modal-buttons">
-                <button type="button" class="btn-modal btn-modal-secondary" id="btnCancelOdo">Cancelar</button>
-                <button type="button" class="btn-modal btn-modal-primary" id="btnSaveOdo">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: AGREGAR SERVICIO -->
-    <div class="modal" id="serviceModal">
-        <div class="modal-content">
-            <div class="modal-title" id="serviceModalTitle">Nuevo Registro de Servicio</div>
-            <form id="serviceForm" onsubmit="return false;">
-                <input type="hidden" id="editServiceIndex">
-                <div class="field-group">
-                    <label>Tipo de Servicio</label>
-                    <input type="text" id="serviceType" required>
-                </div>
-                <div class="field-group">
-                    <label>Kilometraje del Servicio (km)</label>
-                    <input type="number" id="serviceOdometer" step="1" required>
-                </div>
-                <div class="field-group">
-                    <label>Costo ($)</label>
-                    <input type="number" id="serviceCost" step="0.01" required>
-                </div>
-                <div class="field-group">
-                    <label>Fecha</label>
-                    <input type="date" id="serviceDate" required>
-                </div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-modal btn-modal-secondary" id="btnCancelService">Cancelar</button>
-                    <button type="submit" class="btn-modal btn-modal-primary" id="btnSaveService">Guardar</button>
-                </div>
-                <button type="button" id="deleteServiceBtn" class="btn-modal btn-modal-secondary" style="width:100%; margin-top:10px; color:#c5221f; display:none; background:#fce8e6;">Eliminar Servicio</button>
+                <button type="button" id="deleteFuelBtn" class="btn-modal" style="width:100%; margin-top:10px; color:#c5221f; display:none; background:#fce8e6; border:none; border-radius:10px; padding:12px;">Eliminar Registro</button>
             </form>
         </div>
     </div>
 
     <script>
-        let appData = {
-            carName: 'Nissan March',
-            manualOdometer: null,
-            fuels: [],
-            services: []
-        };
-
+        let appData = { carName: 'Nissan March', manualOdometer: null, fuels: [], services: [] };
         const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
         function loadData() {
@@ -755,403 +187,216 @@
                     appData = JSON.parse(saved);
                     if (!appData.fuels) appData.fuels = [];
                     if (!appData.services) appData.services = [];
-                    if (!appData.carName) appData.carName = 'Nissan March';
-                } catch(e) {
-                    console.error("Error cargando datos", e);
-                }
+                } catch(e) { console.error(e); }
             }
         }
 
-        function saveData() {
-            localStorage.setItem('gas_app_data', JSON.stringify(appData));
-            updateUI();
-        }
+        function saveData() { localStorage.setItem('gas_app_data', JSON.stringify(appData)); updateUI(); }
+        function formatNumber(num) { return new Intl.NumberFormat('es-MX').format(num); }
+        function formatDateShort(dateStr) { if (!dateStr) return ''; const parts = dateStr.split('-'); return parts.length === 3 ? `${parts[2]}-${mesesNombres[parseInt(parts[1], 10) - 1]}-${parts[0].substring(2)}` : dateStr; }
 
-        function formatNumber(num) {
-            return new Intl.NumberFormat('es-MX').format(num);
-        }
-
-        function formatDateShort(dateStr) {
-            if (!dateStr) return '';
-            const parts = dateStr.split('-');
-            if (parts.length === 3) {
-                return `${parts[2]}-${mesesNombres[parseInt(parts[1], 10) - 1] || parts[1]}-${parts[0].substring(2)}`;
-            }
-            return dateStr;
-        }
-
-        // --- CORRECCIÓN CRUCIAL DE LÓGICA TEMPORAL ---
-        function calculateTankDifferencesConsumption(chronoFuels) {
+        // --- CÁLCULO DE RENDIMIENTO POR BLOQUE ACUMULADO CONTINUO ---
+        function calculateContinuousConsumption(chronoFuels) {
             if (chronoFuels.length === 0) return [];
             
-            // Creamos una copia limpia para calcular cronológicamente (Pasado -> Presente)
-            let advancedFuels = chronoFuels.map(f => ({...f, calculatedConsumption: null, kmDiff: 0}));
-
-            for (let i = 0; i < advancedFuels.length; i++) {
-                if (i > 0) {
-                    // Los kilómetros recorridos en este tramo actual
-                    advancedFuels[i].kmDiff = advancedFuels[i].odometer - advancedFuels[i-1].odometer;
-                    
-                    let kmRecorridos = advancedFuels[i].kmDiff;
-                    // ¡AQUÍ ESTÁ EL CAMBIO!: El rendimiento de estos km se calcula con los litros de la CARGA ANTERIOR (i-1)
-                    let litrosConsumidos = advancedFuels[i-1].liters; 
-                    
-                    if (kmRecorridos > 0 && litrosConsumidos > 0) {
-                        advancedFuels[i].calculatedConsumption = kmRecorridos / litrosConsumidos;
-                    }
+            return chronoFuels.map((fuel, index) => {
+                if (index === 0) {
+                    return { ...fuel, calculatedConsumption: null, kmDiff: 0 };
                 }
-            }
-            return advancedFuels;
+                
+                let kmDiff = fuel.odometer - chronoFuels[index - 1].odometer;
+                let totalKmFromStart = fuel.odometer - chronoFuels[0].odometer;
+                
+                // Sumamos los litros de todas las cargas previas hasta llegar a esta
+                let totalLitersToThisPoint = 0;
+                for (let i = 0; i < index; i++) {
+                    totalLitersToThisPoint += chronoFuels[i].liters;
+                }
+                
+                let calculatedConsumption = (totalKmFromStart > 0 && totalLitersToThisPoint > 0) 
+                    ? (totalKmFromStart / totalLitersToThisPoint) 
+                    : null;
+
+                return {
+                    ...fuel,
+                    kmDiff: kmDiff,
+                    calculatedConsumption: calculatedConsumption
+                };
+            });
         }
 
         function updateUI() {
-            // Ordenar cronológicamente para calcular de forma correcta el antes y el después
             appData.fuels.sort((a, b) => new Date(a.date) - new Date(b.date) || a.odometer - b.odometer);
-            const computedFuelsChrono = calculateTankDifferencesConsumption(appData.fuels);
-            // Invertir para la visualización del usuario (Últimas cargas primero)
-            const computedFuelsView = [...computedFuelsChrono].sort((a, b) => new Date(b.date) - new Date(a.date) || b.odometer - a.odometer);
+            const computedChrono = calculateContinuousConsumption(appData.fuels);
+            const computedView = [...computedChrono].sort((a, b) => new Date(b.date) - new Date(a.date) || b.odometer - a.odometer);
 
             document.getElementById('carNameDisplay').innerText = appData.carName;
-            document.getElementById('appSubtitle').innerText = appData.carName.toUpperCase();
-            
             let displayedOdo = appData.manualOdometer || (appData.fuels.length > 0 ? Math.max(...appData.fuels.map(f => f.odometer)) : 0);
             document.getElementById('mainOdometer').innerText = formatNumber(displayedOdo);
 
-            // ÚLTIMAS 5 CARGAS EN INICIO
+            // RENDER RESUMEN INICIO
             const latestContainer = document.getElementById('latestFuelContainer');
-            if (computedFuelsView.length === 0) {
-                latestContainer.innerHTML = `<div class="empty-state-mini">No hay registros de combustible</div>`;
+            if (computedView.length === 0) {
+                latestContainer.innerHTML = `<div class="empty-state-mini">No hay registros</div>`;
             } else {
-                let latestHtml = '';
-                computedFuelsView.slice(0, 5).forEach(fuel => {
-                    let consumptionStr = fuel.calculatedConsumption ? fuel.calculatedConsumption.toFixed(1) + " km/L" : "Iniciando";
-                    let emoji = !fuel.calculatedConsumption ? "🔵" : (fuel.calculatedConsumption >= 13 ? "🟢" : (fuel.calculatedConsumption >= 10 ? "🟡" : "🔴"));
-                    latestHtml += `
-                        <div class="single-line-fuel" onclick="openEditFuel('${fuel.id}')">
-                            <span>${formatDateShort(fuel.date)}</span>
-                            <span>⛽ ${fuel.liters.toFixed(1)} L</span>
-                            <span>$${formatNumber(fuel.totalCost.toFixed(2))}</span>
-                            <span>${emoji} ${consumptionStr}</span>
-                        </div>
-                    `;
+                let html = '';
+                computedView.slice(0, 5).forEach(f => {
+                    let disp = f.calculatedConsumption ? f.calculatedConsumption.toFixed(1) + " km/L" : "Iniciando";
+                    let emoji = !f.calculatedConsumption ? "🔵" : (f.calculatedConsumption >= 13 ? "🟢" : (f.calculatedConsumption >= 11 ? "🔸" : "🔴"));
+                    html += `<div class="single-line-fuel" onclick="openEditFuel('${f.id}')"><span>${formatDateShort(f.date)}</span><span>⛽ ${f.liters.toFixed(1)}L</span><span>$${formatNumber(f.totalCost.toFixed(2))}</span><span>${emoji} ${disp}</span></div>`;
                 });
-                latestContainer.innerHTML = latestHtml;
+                latestContainer.innerHTML = html;
             }
 
             // SELECTOR DE MESES
             const monthSelect = document.getElementById('monthSelect');
-            const currentSelectedMonth = monthSelect.value || "todos";
-            let mesesDisponibles = new Set();
-            appData.fuels.forEach(f => {
-                const parts = f.date.split('-');
-                if(parts.length === 3) mesesDisponibles.add(`${parts[0]}-${parts[1]}`);
-            });
+            const currentSel = monthSelect.value || "todos";
+            let sets = new Set(); appData.fuels.forEach(f => { const p = f.date.split('-'); if(p.length===3) sets.add(`${p[0]}-${p[1]}`); });
+            let sHtml = '<option value="todos">Todos los meses</option>';
+            Array.from(sets).sort((a,b)=>new Date(b)-new Date(a)).forEach(m => { const p = m.split('-'); sHtml += `<option value="${m}">${mesesNombres[parseInt(p[1],10)-1]} ${p[0]}</option>`; });
+            monthSelect.innerHTML = sHtml; monthSelect.value = currentSel;
 
-            let selectHtml = '<option value="todos">Todos los meses</option>';
-            Array.from(mesesDisponibles).sort((a,b) => new Date(b) - new Date(a)).forEach(m => {
-                const p = m.split('-');
-                selectHtml += `<option value="${m}">${mesesNombres[parseInt(p[1], 10) - 1]} ${p[0]}</option>`;
-            });
-            monthSelect.innerHTML = selectHtml;
-            monthSelect.value = currentSelectedMonth;
-
-            updateHistoryTabFiltered(computedFuelsView);
-
-            // SERVICIOS
-            const servicesContainer = document.getElementById('servicesList');
-            if (appData.services.length === 0) {
-                servicesContainer.innerHTML = `<div class="empty-state-mini">No hay servicios registrados</div>`;
-            } else {
-                let sHtml = '';
-                appData.services.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(s => {
-                    sHtml += `
-                        <div class="service-item-compact" onclick="openEditService('${s.id}')">
-                            <div>
-                                <strong>🛠️ ${s.type}</strong><br>
-                                <span style="font-size:12px; color:#666;">📅 ${formatDateShort(s.date)} — 📈 ${formatNumber(s.odometer)} km</span>
-                            </div>
-                            <span style="font-weight:700; color:#667eea;">$${formatNumber(s.cost.toFixed(2))}</span>
-                        </div>
-                    `;
-                });
-                servicesContainer.innerHTML = sHtml;
-            }
+            updateHistoryTabFiltered(computedChrono, computedView);
         }
 
-        function updateHistoryTabFiltered(computedFuelsView) {
+        function updateHistoryTabFiltered(computedChrono, computedView) {
             const selectedMonth = document.getElementById('monthSelect').value;
             const historyContainer = document.getElementById('historyList');
             
-            let filteredFuels = selectedMonth === "todos" ? computedFuelsView : computedFuelsView.filter(f => f.date.startsWith(selectedMonth));
+            // Filtrado de la vista del historial
+            let filteredView = selectedMonth === "todos" ? computedView : computedView.filter(f => f.date.startsWith(selectedMonth));
+            // Filtrado cronológico para cálculos precisos del bloque del mes
+            let filteredChrono = selectedMonth === "todos" ? computedChrono : computedChrono.filter(f => f.date.startsWith(selectedMonth));
 
-            document.getElementById('summaryMonth').innerText = selectedMonth === "todos" ? "Todos" : mesesNombres[parseInt(selectedMonth.split('-')[1], 10) - 1];
+            // CÁLCULO DE LAS TARJETAS SUPERIORES
+            let totalKmPeriodo = 0;
+            let totalSpentPeriodo = filteredChrono.reduce((sum, f) => sum + f.totalCost, 0);
+            let totalLitersPeriodo = filteredChrono.reduce((sum, f) => sum + f.liters, 0);
+            let rendimientoPeriodo = "- -";
 
-            let totalSpent = filteredFuels.reduce((sum, f) => sum + f.totalCost, 0);
-            let totalLiters = filteredFuels.reduce((sum, f) => sum + f.liters, 0);
-            document.getElementById('summaryTotal').innerText = `$${formatNumber(totalSpent.toFixed(2))}`;
-            document.getElementById('summaryLiters').innerText = `${totalLiters.toFixed(1)} L`;
-
-            let validFuels = filteredFuels.filter(f => f.calculatedConsumption !== null);
-            
-            // Rendimiento promedio del mes seleccionado basado en trayectos válidos
-            if(validFuels.length > 0) {
-                let sumKm = validFuels.reduce((sum, f) => sum + f.kmDiff, 0);
-                // Buscamos los litros del origen de esos km
-                let sumLiters = 0;
-                validFuels.forEach(vf => {
-                    let idx = appData.fuels.findIndex(orig => orig.id === vf.id);
-                    if(idx > 0) sumLiters += appData.fuels[idx-1].liters;
-                });
-                let finalAvg = sumLiters > 0 ? (sumKm / sumLiters) : 0;
-                document.getElementById('summaryAvg').innerText = finalAvg > 0 ? finalAvg.toFixed(1) + " km/L" : "0.0 km/L";
-            } else {
-                document.getElementById('summaryAvg').innerText = "0.0 km/L";
+            if (filteredChrono.length > 0) {
+                // Kilómetros del período = suma de las distancias de cada tramo en este bloque
+                totalKmPeriodo = filteredChrono.reduce((sum, f) => sum + f.kmDiff, 0);
+                
+                // Si se seleccionaron todos los meses, medimos desde el primer registro real de la historia
+                if (selectedMonth === "todos" && appData.fuels.length > 1) {
+                    totalKmPeriodo = appData.fuels[appData.fuels.length - 1].odometer - appData.fuels[0].odometer;
+                    let litrosMenosUltimo = appData.fuels.slice(0, -1).reduce((sum, f) => sum + f.liters, 0);
+                    rendimientoPeriodo = litrosMenosUltimo > 0 ? (totalKmPeriodo / litrosMenosUltimo).toFixed(1) + " km/L" : "- -";
+                } else {
+                    // Para un mes específico, dividimos los kilómetros del mes entre sus litros introducidos
+                    rendimientoPeriodo = totalLitersPeriodo > 0 ? (totalKmPeriodo / totalLitersPeriodo).toFixed(1) + " km/L" : "- -";
+                }
             }
 
-            if (filteredFuels.length === 0) {
-                historyContainer.innerHTML = `<div class="empty-state-mini">No hay cargas en este periodo</div>`;
-                return;
+            // Inyección de valores en las tarjetas de arriba
+            document.getElementById('summaryKm').innerText = `${formatNumber(totalKmPeriodo)} km`;
+            document.getElementById('summaryTotal').innerText = `$${formatNumber(totalSpentPeriodo.toFixed(2))}`;
+            document.getElementById('summaryLiters').innerText = `${totalLitersPeriodo.toFixed(1)} L`;
+            document.getElementById('summaryAvg').innerText = rendimientoPeriodo;
+
+            if (filteredView.length === 0) {
+                historyContainer.innerHTML = `<div class="empty-state-mini">Sin registros</div>`; return;
             }
 
+            // RENDER DE LAS FILAS DEL HISTORIAL
             let html = '';
-            filteredFuels.forEach(fuel => {
-                let display = fuel.calculatedConsumption ? fuel.calculatedConsumption.toFixed(1) + ' km/L' : 'Iniciando';
-                let cClass = !fuel.calculatedConsumption ? 'badge-none' : (fuel.calculatedConsumption >= 13 ? 'badge-good' : (fuel.calculatedConsumption >= 10 ? 'badge-warn' : 'badge-bad'));
-                let emoji = !fuel.calculatedConsumption ? '🔵 ' : (fuel.calculatedConsumption >= 13 ? '🟢 ' : (fuel.calculatedConsumption >= 10 ? '🟡 ' : '🔴 '));
-
+            filteredView.forEach(f => {
+                let disp = f.calculatedConsumption ? f.calculatedConsumption.toFixed(1) + ' km/L' : 'Línea Base';
+                let cClass = !f.calculatedConsumption ? 'badge-none' : (f.calculatedConsumption >= 13 ? 'badge-good' : (f.calculatedConsumption >= 11 ? 'badge-warn' : 'badge-bad'));
                 html += `
-                    <div class="history-item-compact" onclick="openEditFuel('${fuel.id}')">
+                    <div class="history-item-compact" onclick="openEditFuel('${f.id}')">
                         <div class="history-row1">
-                            <span class="history-date">📅 ${formatDateShort(fuel.date)}</span>
-                            <span class="history-km">${formatNumber(fuel.odometer)} km
-                                ${fuel.kmDiff > 0 ? `<span class="history-km-diff">(+${formatNumber(fuel.kmDiff)} km)</span>` : ''}
-                            </span>
+                            <span class="history-date">📅 ${formatDateShort(f.date)}</span>
+                            <span class="history-km">${formatNumber(f.odometer)} km ${f.kmDiff > 0 ? `<span class="history-km-diff">(+${f.kmDiff})</span>`:''}</span>
                         </div>
                         <div class="history-row2">
-                            <span>⛽ ${fuel.liters.toFixed(1)} L</span>
-                            <span>💰 $${fuel.pricePerLiter.toFixed(2)}/L</span>
-                            <span class="history-consumption-badge ${cClass}">⚡ ${emoji}${display}</span>
-                            <span style="font-weight:700; color:#1a1a2e;">$${fuel.totalCost.toFixed(2)}</span>
+                            <span>⛽ ${f.liters.toFixed(1)}L</span>
+                            <span class="history-consumption-badge ${cClass}">Promedio: ${disp}</span>
+                            <span style="font-weight:700;">$${f.totalCost.toFixed(2)}</span>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             historyContainer.innerHTML = html;
         }
 
-        document.getElementById('monthSelect').addEventListener('change', () => {
-            updateHistoryTabFiltered(calculateTankDifferencesConsumption([...appData.fuels]).sort((a, b) => new Date(b.date) - new Date(a.date)));
-        });
+        document.getElementById('monthSelect').addEventListener('change', () => { updateUI(); });
 
-        const fOdoInput = document.getElementById('fuelOdometer');
-        const fLitersInput = document.getElementById('fuelLiters');
-        const fPriceInput = document.getElementById('fuelPrice');
-        const liveTotalLabel = document.getElementById('liveTotal');
-        const liveRendimientoLabel = document.getElementById('liveRendimiento');
+        // EVALUACIÓN EN VIVO DEL MODAL
+        const fOdo = document.getElementById('fuelOdometer');
+        const fLit = document.getElementById('fuelLiters');
+        const fPri = document.getElementById('fuelPrice');
 
-        // CÁLCULO EN TIEMPO REAL DESDE EL MODAL MIRANDO AL PASADO
-        function calculateLiveFuelValues() {
-            const odo = parseInt(fOdoInput.value) || 0;
-            const liters = parseFloat(fLitersInput.value) || 0;
-            const price = parseFloat(fPriceInput.value) || 0;
-
-            liveTotalLabel.innerText = `$${formatNumber((liters * price).toFixed(2))}`;
-
-            const currentId = document.getElementById('editFuelIndex').value;
-            // Clonamos el set existente omitiendo la versión vieja de este registro
-            let tempFuels = [...appData.fuels.filter(f => String(f.id) !== String(currentId)), { id: 'temp', odometer: odo, liters: liters }];
-            tempFuels.sort((a,b) => a.odometer - b.odometer);
-
-            let targetIdx = tempFuels.findIndex(f => f.id === 'temp');
-            if (targetIdx <= 0) {
-                liveRendimientoLabel.innerText = "Iniciando";
-                liveRendimientoLabel.className = "rendimiento-value empty";
-            } else {
-                let km = tempFuels[targetIdx].odometer - tempFuels[targetIdx - 1].odometer;
-                // Usamos los litros guardados en el registro anterior para evaluar este tramo actual
-                let litrosAnteriores = tempFuels[targetIdx - 1].liters;
-                
-                if (km <= 0 || litrosAnteriores <= 0) {
-                    liveRendimientoLabel.innerText = "Iniciando";
-                    liveRendimientoLabel.className = "rendimiento-value empty";
-                } else {
-                    let currentAvg = km / litrosAnteriores;
-                    liveRendimientoLabel.innerText = `${currentAvg.toFixed(1)} km/L`;
-                    liveRendimientoLabel.className = `rendimiento-value ${currentAvg >= 13 ? 'excellent' : (currentAvg >= 10 ? 'good' : 'poor')}`;
-                }
-            }
+        function liveCalc() {
+            let l = parseFloat(fLit.value) || 0; let p = parseFloat(fPri.value) || 0;
+            document.getElementById('liveTotal').innerText = `$${formatNumber((l*p).toFixed(2))}`;
         }
+        [fOdo, fLit, fPri].forEach(i => i.addEventListener('input', liveCalc));
 
-        [fOdoInput, fLitersInput, fPriceInput].forEach(inp => inp.addEventListener('input', calculateLiveFuelValues));
-
-        function toggleModal(id, action) {
-            document.getElementById(id).classList[action === 'open' ? 'add' : 'remove']('active');
-        }
-
-        document.getElementById('mainOdometer').addEventListener('click', () => {
-            document.getElementById('manualOdoInput').value = appData.manualOdometer || '';
-            toggleModal('odoModal', 'open');
-        });
-        document.getElementById('btnCancelOdo').addEventListener('click', () => toggleModal('odoModal', 'close'));
-        document.getElementById('btnSaveOdo').addEventListener('click', () => {
-            appData.manualOdometer = parseInt(document.getElementById('manualOdoInput').value) || null;
-            toggleModal('odoModal', 'close');
-            saveData();
-        });
-
-        document.getElementById('carNameDisplay').addEventListener('click', () => {
-            document.getElementById('carNameInput').value = appData.carName;
-            toggleModal('carModal', 'open');
-        });
-        document.getElementById('btnCancelCar').addEventListener('click', () => toggleModal('carModal', 'close'));
-        document.getElementById('btnSaveCar').addEventListener('click', () => {
-            appData.carName = document.getElementById('carNameInput').value.trim() || 'Nissan March';
-            toggleModal('carModal', 'close');
-            saveData();
-        });
-
-        let currentTab = 'inicio';
+        function toggleModal(id, act) { document.getElementById(id).classList[act === 'open' ? 'add' : 'remove']('active'); }
+        
         document.getElementById('fabBtn').addEventListener('click', () => {
-            if (currentTab === 'servicios') {
-                document.getElementById('serviceForm').reset();
-                document.getElementById('editServiceIndex').value = '';
-                document.getElementById('serviceModalTitle').innerText = '💡 Nuevo Servicio';
-                document.getElementById('serviceDate').value = new Date().toISOString().split('T')[0];
-                document.getElementById('deleteServiceBtn').style.display = 'none';
-                toggleModal('serviceModal', 'open');
-            } else {
-                document.getElementById('fuelForm').reset();
-                document.getElementById('editFuelIndex').value = '';
-                document.getElementById('fuelModalTitle').innerText = '⛽ Nueva Carga';
-                document.getElementById('fuelDate').value = new Date().toISOString().split('T')[0];
-                document.getElementById('deleteFuelBtn').style.display = 'none';
-                
-                if (appData.fuels.length > 0) {
-                    fOdoInput.value = appData.fuels[appData.fuels.length - 1].odometer;
-                    fPriceInput.value = appData.fuels[appData.fuels.length - 1].pricePerLiter;
-                }
-                toggleModal('fuelModal', 'open');
-                calculateLiveFuelValues();
+            document.getElementById('fuelForm').reset();
+            document.getElementById('editFuelIndex').value = '';
+            document.getElementById('fuelDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('deleteFuelBtn').style.display = 'none';
+            if(appData.fuels.length > 0) {
+                fOdo.value = appData.fuels[appData.fuels.length-1].odometer;
+                fPri.value = appData.fuels[appData.fuels.length-1].pricePerLiter;
             }
+            toggleModal('fuelModal', 'open'); liveCalc();
         });
 
         document.getElementById('btnCancelFuel').addEventListener('click', () => toggleModal('fuelModal', 'close'));
-        document.getElementById('btnCancelService').addEventListener('click', () => toggleModal('serviceModal', 'close'));
+        
+        document.getElementById('fuelForm').addEventListener('submit', () => {
+            let id = document.getElementById('editFuelIndex').value;
+            let o = parseInt(fOdo.value); let l = parseFloat(fLit.value); let p = parseFloat(fPri.value);
+            let d = document.getElementById('fuelDate').value;
 
-        document.getElementById('fuelForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('editFuelIndex').value;
-            const odo = parseInt(fOdoInput.value);
-            const liters = parseFloat(fLitersInput.value);
-            const price = parseFloat(fPriceInput.value);
-            const date = document.getElementById('fuelDate').value;
-
-            if (id) {
+            if(id) {
                 let f = appData.fuels.find(x => String(x.id) === String(id));
-                if (f) { f.odometer = odo; f.liters = liters; f.pricePerLiter = price; f.date = date; f.totalCost = liters * price; }
+                if(f) { f.odometer = o; f.liters = l; f.pricePerLiter = p; f.date = d; f.totalCost = l*p; }
             } else {
-                appData.fuels.push({ id: 'f_' + Date.now(), odometer: odo, liters: liters, pricePerLiter: price, date: date, totalCost: liters * price });
+                appData.fuels.push({ id: 'f_'+Date.now(), odometer: o, liters: l, pricePerLiter: p, date: d, totalCost: l*p });
             }
-            toggleModal('fuelModal', 'close');
-            saveData();
-        });
-
-        document.getElementById('serviceForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('editServiceIndex').value;
-            const type = document.getElementById('serviceType').value.trim();
-            const odo = parseInt(document.getElementById('serviceOdometer').value);
-            const cost = parseFloat(document.getElementById('serviceCost').value);
-            const date = document.getElementById('serviceDate').value;
-
-            if (id) {
-                let s = appData.services.find(x => String(x.id) === String(id));
-                if (s) { s.type = type; s.odometer = odo; s.cost = cost; s.date = date; }
-            } else {
-                appData.services.push({ id: 's_' + Date.now(), type: type, odometer: odo, cost: cost, date: date });
-            }
-            toggleModal('serviceModal', 'close');
-            saveData();
+            toggleModal('fuelModal', 'close'); saveData();
         });
 
         function openEditFuel(id) {
-            let f = appData.fuels.find(x => String(x.id) === String(id));
-            if (!f) return;
+            let f = appData.fuels.find(x => String(x.id) === String(id)); if(!f) return;
             document.getElementById('editFuelIndex').value = f.id;
-            fOdoInput.value = f.odometer; fLitersInput.value = f.liters; fPriceInput.value = f.pricePerLiter;
+            fOdo.value = f.odometer; fLit.value = f.liters; fPri.value = f.pricePerLiter;
             document.getElementById('fuelDate').value = f.date;
             document.getElementById('deleteFuelBtn').style.display = 'block';
-            toggleModal('fuelModal', 'open');
-            calculateLiveFuelValues();
+            toggleModal('fuelModal', 'open'); liveCalc();
         }
 
         document.getElementById('deleteFuelBtn').addEventListener('click', () => {
-            if (confirm('¿Eliminar este registro?')) {
+            if(confirm('¿Eliminar registro?')) {
                 appData.fuels = appData.fuels.filter(x => String(x.id) !== String(document.getElementById('editFuelIndex').value));
-                toggleModal('fuelModal', 'close');
-                saveData();
+                toggleModal('fuelModal', 'close'); saveData();
             }
         });
 
-        function openEditService(id) {
-            let s = appData.services.find(x => String(x.id) === String(id));
-            if (!s) return;
-            document.getElementById('editServiceIndex').value = s.id;
-            document.getElementById('serviceType').value = s.type;
-            document.getElementById('serviceOdometer').value = s.odometer;
-            document.getElementById('serviceCost').value = s.cost;
-            document.getElementById('serviceDate').value = s.date;
-            document.getElementById('deleteServiceBtn').style.display = 'block';
-            toggleModal('serviceModal', 'open');
-        }
-
-        document.getElementById('deleteServiceBtn').addEventListener('click', () => {
-            if (confirm('¿Eliminar este servicio?')) {
-                appData.services = appData.services.filter(x => String(x.id) !== String(document.getElementById('editServiceIndex').value));
-                toggleModal('serviceModal', 'close');
-                saveData();
-            }
-        });
-
-        const menuBtn = document.getElementById('menuBtn');
-        const menuDropdown = document.getElementById('menuDropdown');
-        menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block'; });
-        document.addEventListener('click', () => menuDropdown.style.display = 'none');
-
-        document.getElementById('btnExport').addEventListener('click', () => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
-            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "gasapp_backup.json"); dl.click();
-        });
-
-        document.getElementById('btnImport').addEventListener('click', () => {
-            const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
-            input.onchange = e => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onload = re => {
-                    try {
-                        appData = JSON.parse(re.target.result);
-                        saveData();
-                        alert('Datos importados correctamente ✅');
-                    } catch(err) { alert('JSON no válido'); }
-                }
-                reader.readAsText(file);
-            }
-            input.click();
-        });
-
-        const navItems = document.querySelectorAll('.nav-item');
-        const tabContents = document.querySelectorAll('.tab-content');
+        // NAVEGACIÓN Y MENÚS
+        const navItems = document.querySelectorAll('.nav-bar .nav-item');
         navItems.forEach(item => {
             item.addEventListener('click', () => {
-                navItems.forEach(i => i.classList.remove('active'));
-                tabContents.forEach(tc => tc.classList.remove('active'));
-                item.classList.add('active');
-                currentTab = item.getAttribute('data-tab');
-                document.getElementById(`tab-${currentTab}`).classList.add('active');
-                document.getElementById('appTitle').innerText = currentTab === 'inicio' ? "Resumen" : (currentTab === 'historial' ? "Historial" : "Servicios");
+                navItems.forEach(i => i.classList.remove('active')); item.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                const targetTab = item.getAttribute('data-tab');
+                document.getElementById(`tab-${targetTab}`).classList.add('active');
+                document.getElementById('appTitle').innerText = item.querySelector('.nav-label').innerText;
             });
         });
+
+        const menuBtn = document.getElementById('menuBtn'); const menuDropdown = document.getElementById('menuDropdown');
+        menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block'; });
+        document.addEventListener('click', () => menuDropdown.style.display = 'none');
+        
+        document.getElementById('btnExport').addEventListener('click', () => { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData)); const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "gasapp_backup.json"); dl.click(); });
+        document.getElementById('btnImport').addEventListener('click', () => { const input = document.createElement('input'); input.type = 'file'; input.accept = '.json'; input.onchange = e => { const file = e.target.files[0]; const reader = new FileReader(); reader.onload = re => { try { appData = JSON.parse(re.target.result); saveData(); alert('¡Importado con éxito! ✅'); } catch(err) { alert('Error al importar el archivo JSON.'); } }; reader.readAsText(file); }; input.click(); });
 
         window.addEventListener('DOMContentLoaded', () => { loadData(); updateUI(); });
     </script>

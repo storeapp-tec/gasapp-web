@@ -1204,6 +1204,11 @@
         .rendimiento-value.empty {
             color: #999;
         }
+        .rendimiento-value.sin-datos {
+            color: #999;
+            font-size: 14px;
+            font-weight: 500;
+        }
     </style>
 
     <script>
@@ -1363,23 +1368,31 @@
             return `${day} de ${month} ${d.getFullYear()}`;
         }
 
+        // ===== FUNCIÓN DE CONSUMO CORREGIDA (retorna null si no hay datos) =====
         function calculateConsumption(prevOdometer, currOdometer, liters) {
-            if (!prevOdometer || !currOdometer || !liters || liters <= 0) return 0;
+            if (!prevOdometer || !currOdometer || !liters || liters <= 0) return null;
             const km = currOdometer - prevOdometer;
-            if (km <= 0) return 0;
+            if (km <= 0) return null;
             return Math.round((km / liters) * 10) / 10;
         }
 
         function getConsumptionColor(kmL) {
+            if (kmL === null) return '';
             if (kmL >= 15) return 'consumption-excellent';
             if (kmL >= 10) return 'consumption-good';
             return 'consumption-poor';
         }
 
         function getConsumptionEmoji(kmL) {
+            if (kmL === null) return '⚪';
             if (kmL >= 15) return '🟢';
             if (kmL >= 10) return '🟡';
             return '🔴';
+        }
+
+        function getConsumptionDisplay(kmL) {
+            if (kmL === null) return 'Sin datos';
+            return kmL.toFixed(1) + ' km/L';
         }
 
         function showToast(message, type = 'info') {
@@ -1784,16 +1797,22 @@
             });
             document.getElementById('fuelForm').addEventListener('submit', handleFuelSubmit);
 
-            // === EVENTOS SIMPLIFICADOS PARA RENDIMIENTO ===
-            document.getElementById('fuelOdometer').addEventListener('input', function() {
-                calcularRendimientoEnVivo();
+            // ===== EVENTOS PARA RENDIMIENTO Y TOTAL =====
+            document.getElementById('fuelOdometer').addEventListener('input', function(e) {
                 calculateFuelTotal();
+                calcularRendimientoEnVivo(e);
             });
-            document.getElementById('fuelLiters').addEventListener('input', function() {
-                calcularRendimientoEnVivo();
+            document.getElementById('fuelLiters').addEventListener('input', function(e) {
                 calculateFuelTotal();
+                calcularRendimientoEnVivo(e);
             });
             document.getElementById('fuelPrice').addEventListener('input', calculateFuelTotal);
+
+            // Forzar cálculo inicial
+            setTimeout(() => {
+                calculateFuelTotal();
+                calcularRendimientoEnVivo();
+            }, 100);
 
             document.getElementById('serviceForm').addEventListener('submit', handleServiceSubmit);
             document.getElementById('deleteFuelBtn').addEventListener('click', handleDeleteFuel);
@@ -1805,7 +1824,7 @@
         });
 
         // ================================================================
-        // RENDIMIENTO EN VIVO (CORREGIDO - SIN ASYNC)
+        // RENDIMIENTO EN VIVO
         // ================================================================
 
         function calcularRendimientoEnVivo() {
@@ -1816,48 +1835,51 @@
             const nuevoOdometer = parseFloat(odometerInput.value);
             const litros = parseFloat(litersInput.value);
             
-            if (!nuevoOdometer || !litros || litros <= 0) {
+            if (isNaN(nuevoOdometer) || nuevoOdometer <= 0 || isNaN(litros) || litros <= 0) {
                 rendimientoElement.textContent = '-- km/L';
                 rendimientoElement.className = 'rendimiento-value empty';
                 return;
             }
             
-            // Obtener el último odómetro guardado
-            getLastFuel().then(lastFuel => {
-                const initialKm = getInitialKm();
-                let odometroAnterior = 0;
-                
-                if (lastFuel) {
-                    odometroAnterior = lastFuel.odometer;
-                } else if (initialKm) {
-                    odometroAnterior = initialKm;
-                } else {
-                    rendimientoElement.textContent = '-- km/L';
-                    rendimientoElement.className = 'rendimiento-value empty';
-                    return;
-                }
-                
-                const kmRecorridos = nuevoOdometer - odometroAnterior;
-                if (kmRecorridos <= 0) {
-                    rendimientoElement.textContent = '-- km/L';
-                    rendimientoElement.className = 'rendimiento-value empty';
-                    return;
-                }
-                
-                const rendimiento = Math.round((kmRecorridos / litros) * 10) / 10;
-                
-                rendimientoElement.textContent = rendimiento.toFixed(1) + ' km/L';
-                if (rendimiento >= 15) {
-                    rendimientoElement.className = 'rendimiento-value excellent';
-                } else if (rendimiento >= 10) {
-                    rendimientoElement.className = 'rendimiento-value good';
-                } else {
+            (async function() {
+                try {
+                    const lastFuel = await getLastFuel();
+                    const initialKm = getInitialKm();
+                    
+                    let odometroAnterior = 0;
+                    if (lastFuel) {
+                        odometroAnterior = lastFuel.odometer;
+                    } else if (initialKm) {
+                        odometroAnterior = initialKm;
+                    } else {
+                        rendimientoElement.textContent = 'Sin datos';
+                        rendimientoElement.className = 'rendimiento-value sin-datos';
+                        return;
+                    }
+                    
+                    const kmRecorridos = nuevoOdometer - odometroAnterior;
+                    if (kmRecorridos <= 0) {
+                        rendimientoElement.textContent = 'Sin datos';
+                        rendimientoElement.className = 'rendimiento-value sin-datos';
+                        return;
+                    }
+                    
+                    const rendimiento = Math.round((kmRecorridos / litros) * 10) / 10;
+                    
+                    rendimientoElement.textContent = rendimiento.toFixed(1) + ' km/L';
+                    if (rendimiento >= 15) {
+                        rendimientoElement.className = 'rendimiento-value excellent';
+                    } else if (rendimiento >= 10) {
+                        rendimientoElement.className = 'rendimiento-value good';
+                    } else {
+                        rendimientoElement.className = 'rendimiento-value poor';
+                    }
+                } catch (error) {
+                    console.error('Error al calcular rendimiento:', error);
+                    rendimientoElement.textContent = 'Error';
                     rendimientoElement.className = 'rendimiento-value poor';
                 }
-            }).catch(() => {
-                rendimientoElement.textContent = '-- km/L';
-                rendimientoElement.className = 'rendimiento-value empty';
-            });
+            })();
         }
 
         // ================================================================
@@ -1885,7 +1907,7 @@
                     for (let i = 0; i < latest.length; i++) {
                         const fuel = latest[i];
                         const prev = i < allFuels.length - 1 ? allFuels[i + 1] : null;
-                        let consumption = 0;
+                        let consumption = null;
                         if (prev) {
                             consumption = calculateConsumption(prev.odometer, fuel.odometer, fuel.liters);
                         } else if (initialKm) {
@@ -1893,6 +1915,8 @@
                         }
                         const cClass = getConsumptionColor(consumption);
                         const emoji = getConsumptionEmoji(consumption);
+                        const display = getConsumptionDisplay(consumption);
+                        
                         html += `
                             <div class="fuel-item-compact" onclick="openFuelModal(${fuel.id})">
                                 <div class="fuel-left-compact">
@@ -1904,7 +1928,7 @@
                                 </div>
                                 <div class="fuel-right-compact">
                                     <span class="fuel-consumption-compact ${cClass}">
-                                        ${emoji} ${consumption > 0 ? consumption.toFixed(1) : '0.0'} km/L
+                                        ${emoji} ${display}
                                     </span>
                                 </div>
                             </div>
@@ -2235,7 +2259,7 @@
         }
 
         // ================================================================
-        // HISTORIAL
+        // HISTORIAL (CON "Sin datos" en lugar de 0.0 km/L)
         // ================================================================
 
         let histMonth = new Date().getMonth();
@@ -2316,14 +2340,14 @@
                                 prev = allSorted[idx + 1];
                             } else if (initialKm) {
                                 const c = calculateConsumption(initialKm, curr.odometer, curr.liters);
-                                if (c > 0) { totalC += c;
+                                if (c !== null && c > 0) { totalC += c;
                                     valid++; }
                                 continue;
                             }
                         }
                         if (prev) {
                             const c = calculateConsumption(prev.odometer, curr.odometer, curr.liters);
-                            if (c > 0) { totalC += c;
+                            if (c !== null && c > 0) { totalC += c;
                                 valid++; }
                         }
                     }
@@ -2349,7 +2373,7 @@
                 for (let i = 0; i < fuels.length; i++) {
                     const fuel = fuels[i];
                     let prev = null,
-                        consumption = 0,
+                        consumption = null,
                         kmDiff = 0;
                     
                     if (i < fuels.length - 1) {
@@ -2372,6 +2396,7 @@
                     
                     const cClass = getConsumptionColor(consumption);
                     const emoji = getConsumptionEmoji(consumption);
+                    const display = getConsumptionDisplay(consumption);
                     const dateObj = new Date(fuel.date + 'T00:00:00');
                     const day = String(dateObj.getDate()).padStart(2, '0');
                     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -2389,7 +2414,7 @@
                             <div class="history-row2">
                                 <span>⛽ ${fuel.liters.toFixed(1)} L</span>
                                 <span>💰 $${fuel.pricePerLiter.toFixed(2)}/L</span>
-                                <span class="history-consumption-badge ${cClass}">${emoji} ${consumption > 0 ? consumption.toFixed(1) : '0.0'} km/L</span>
+                                <span class="history-consumption-badge ${cClass}">${emoji} ${display}</span>
                                 <span>$${fuel.totalCost.toFixed(2)}</span>
                             </div>
                         </div>

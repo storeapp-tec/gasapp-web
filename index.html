@@ -1114,7 +1114,7 @@
                             <input type="number" id="fuelPrice" placeholder="23.66" required step="0.01">
                         </div>
                     </div>
-                    <!-- ===== NUEVO: RENDIMIENTO EN VIVO ===== -->
+                    <!-- ===== RENDIMIENTO EN VIVO ===== -->
                     <div class="rendimiento-box" id="rendimientoBox">
                         <span class="rendimiento-label">📊 Rendimiento</span>
                         <span class="rendimiento-value" id="rendimientoValue">-- km/L</span>
@@ -1236,26 +1236,19 @@
             }
         });
 
-        // ===== NUEVA FUNCIÓN: FORZAR ACTUALIZACIÓN =====
         function forzarActualizacion() {
             var menu = document.getElementById('adminMenu');
             if (menu) menu.style.display = 'none';
-            
-            // Recargar todos los datos
             updateDashboard();
             populateMonthSelector();
             updateHistory();
             loadServices();
-            
             showToast('✅ Datos actualizados', 'success');
-            console.log('🔄 Actualización forzada ejecutada');
         }
 
-        // ===== NUEVA FUNCIÓN: DESCARGAR BACKUP MANUAL =====
         function descargarBackupManual() {
             var menu = document.getElementById('adminMenu');
             if (menu) menu.style.display = 'none';
-            
             try {
                 const promesaFuels = getAllFuels();
                 const promesaServices = getAllServices();
@@ -1272,7 +1265,6 @@
                     const json = JSON.stringify(datos, null, 2);
                     const blob = new Blob([json], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
-                    
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = 'gasapp-backup.json';
@@ -1283,14 +1275,11 @@
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
                     }, 500);
-                    
                     showToast('✅ Backup descargado', 'success');
                 }).catch(error => {
-                    console.error('Error al obtener datos para backup:', error);
                     showToast('❌ Error al generar backup', 'error');
                 });
             } catch (error) {
-                console.error('Error en backup manual:', error);
                 showToast('❌ Error al generar backup', 'error');
             }
         }
@@ -1298,7 +1287,6 @@
         function importarBackup() {
             var menu = document.getElementById('adminMenu');
             if (menu) menu.style.display = 'none';
-
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.json';
@@ -1328,21 +1316,15 @@
                         await addService(service);
                     }
                     showToast('✅ Backup restaurado correctamente', 'success');
-                    // Forzar actualización después de restaurar
                     setTimeout(() => {
                         location.reload();
                     }, 1500);
                 } catch (error) {
-                    console.error('Error al importar:', error);
                     showToast('❌ Error al importar: ' + error.message, 'error');
                 }
             };
             input.click();
         }
-
-        // ================================================================
-        // DECLARAR FUNCIONES GLOBALES
-        // ================================================================
 
         window.openFuelModal = openFuelModal;
         window.openServiceModal = openServiceModal;
@@ -1381,7 +1363,6 @@
             return `${day} de ${month} ${d.getFullYear()}`;
         }
 
-        // ===== FUNCIÓN DE CONSUMO =====
         function calculateConsumption(prevOdometer, currOdometer, liters) {
             if (!prevOdometer || !currOdometer || !liters || liters <= 0) return 0;
             const km = currOdometer - prevOdometer;
@@ -1802,15 +1783,21 @@
                 }
             });
             document.getElementById('fuelForm').addEventListener('submit', handleFuelSubmit);
-            
-            // === NUEVOS EVENTOS PARA RENDIMIENTO ===
-            document.getElementById('fuelOdometer').addEventListener('input', calcularRendimientoEnVivo);
-            document.getElementById('fuelLiters').addEventListener('input', function() {
+
+            // === EVENTOS CORREGIDOS PARA RENDIMIENTO ===
+            const odoInput = document.getElementById('fuelOdometer');
+            const litersInput = document.getElementById('fuelLiters');
+            const priceInput = document.getElementById('fuelPrice');
+
+            function actualizarTodo() {
                 calcularRendimientoEnVivo();
                 calculateFuelTotal();
-            });
-            document.getElementById('fuelPrice').addEventListener('input', calculateFuelTotal);
-            
+            }
+
+            odoInput.addEventListener('input', actualizarTodo);
+            litersInput.addEventListener('input', actualizarTodo);
+            priceInput.addEventListener('input', calculateFuelTotal);
+
             document.getElementById('serviceForm').addEventListener('submit', handleServiceSubmit);
             document.getElementById('deleteFuelBtn').addEventListener('click', handleDeleteFuel);
             document.getElementById('deleteServiceBtn').addEventListener('click', handleDeleteService);
@@ -1821,7 +1808,7 @@
         });
 
         // ================================================================
-        // RENDIMIENTO EN VIVO (NUEVA FUNCIÓN)
+        // RENDIMIENTO EN VIVO
         // ================================================================
 
         async function calcularRendimientoEnVivo() {
@@ -1838,7 +1825,6 @@
                 return;
             }
             
-            // Obtener el último odómetro guardado
             const lastFuel = await getLastFuel();
             const initialKm = getInitialKm();
             
@@ -1853,7 +1839,6 @@
                 return;
             }
             
-            // Calcular rendimiento
             const kmRecorridos = nuevoOdometer - odometroAnterior;
             if (kmRecorridos <= 0) {
                 rendimientoElement.textContent = '-- km/L';
@@ -1863,7 +1848,6 @@
             
             const rendimiento = Math.round((kmRecorridos / litros) * 10) / 10;
             
-            // Mostrar con color
             rendimientoElement.textContent = rendimiento.toFixed(1) + ' km/L';
             if (rendimiento >= 15) {
                 rendimientoElement.className = 'rendimiento-value excellent';
@@ -1967,7 +1951,6 @@
             form.reset();
             deleteBtn.style.display = 'none';
             
-            // === PRECARGAR LITROS CON 38.0 ===
             document.getElementById('fuelLiters').value = '38.0';
             
             const today = new Date().toISOString().split('T')[0];
@@ -1991,7 +1974,6 @@
                 document.getElementById('fuelPrice').value = lastPrice;
             }
             
-            // Resetear rendimiento
             document.getElementById('rendimientoValue').textContent = '-- km/L';
             document.getElementById('rendimientoValue').className = 'rendimiento-value empty';
             
@@ -2008,7 +1990,6 @@
                     document.getElementById('fuelLiters').value = fuel.liters;
                     document.getElementById('fuelPrice').value = fuel.pricePerLiter;
                     calculateFuelTotal();
-                    // Calcular rendimiento al cargar edición
                     await calcularRendimientoEnVivo();
                 }
             } else {

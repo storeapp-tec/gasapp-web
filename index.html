@@ -75,13 +75,75 @@
         .tab-content { display: none; flex: 1; overflow-y: auto; padding: 12px 16px 20px; }
         .tab-content.active { display: block; }
         .section-label { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .nav-bar { background: white; height: 60px; flex-shrink: 0; display: flex; box-shadow: 0 -3px 10px rgba(0,0,0,0.05); border-top: 1px solid rgba(0,0,0,0.05); z-index: 10; }
-        .nav-bar .nav-item { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #888; cursor: pointer; gap: 2px; position: relative; }
-        .nav-bar .nav-item.active { color: #667eea; font-weight: 600; }
+        
+        /* BARRA DE NAVEGACIÓN CORREGIDA */
+        .nav-bar { 
+            background: white; 
+            height: 60px; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.05); 
+            border-top: 1px solid rgba(0,0,0,0.05); 
+            z-index: 10;
+            position: relative;
+            padding: 0 12px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            gap: 4px;
+            flex: 1;
+        }
+        
+        .nav-bar .nav-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #888;
+            cursor: pointer;
+            gap: 2px;
+            padding: 6px 20px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            min-width: 70px;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+        
+        .nav-bar .nav-item.active {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
         .nav-icon { font-size: 18px; }
         .nav-label { font-size: 11px; }
-        .nav-bar .nav-item.menu-item { flex: 0.5; }
-        .nav-bar .nav-item.menu-item .nav-icon { font-size: 22px; }
+        
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 8px 0 4px;
+            cursor: pointer;
+            color: #888;
+            font-size: 22px;
+            font-weight: 700;
+            transition: color 0.2s;
+            min-width: 40px;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+        
+        .nav-menu:hover { color: #667eea; }
+        
         .empty-state-mini { text-align: center; color: #999; padding: 30px 10px; font-size: 13px; }
 
         /* Estilos para Servicios */
@@ -173,10 +235,21 @@
         <button class="btn-fab" id="fabBtn">+</button>
 
         <nav class="nav-bar">
-            <div class="nav-item active" data-tab="inicio"><span class="nav-icon">📊</span><span class="nav-label">Resumen</span></div>
-            <div class="nav-item" data-tab="historial"><span class="nav-icon">📅</span><span class="nav-label">Historial</span></div>
-            <div class="nav-item" data-tab="servicios"><span class="nav-icon">🛠️</span><span class="nav-label">Servicios</span></div>
-            <div class="nav-item menu-item" id="menuBtn"><span class="nav-icon">⋮</span></div>
+            <div class="nav-tabs">
+                <button class="nav-item active" data-tab="inicio">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Resumen</span>
+                </button>
+                <button class="nav-item" data-tab="historial">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Historial</span>
+                </button>
+                <button class="nav-item" data-tab="servicios">
+                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-label">Servicios</span>
+                </button>
+            </div>
+            <button class="nav-menu" id="menuBtn">⋮</button>
         </nav>
 
         <div class="menu-dropdown" id="menuDropdown">
@@ -560,17 +633,26 @@
         }
 
         // --- NAVEGACIÓN ---
-        const navItems = document.querySelectorAll('.nav-bar .nav-item:not(.menu-item)');
+        const navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(item => {
-            item.addEventListener('click', () => {
+            item.addEventListener('click', function() {
+                // Quitar active de todos
                 navItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
+                // Activar el actual
+                this.classList.add('active');
+                
+                // Ocultar todas las pestañas
                 document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-                const targetTab = item.getAttribute('data-tab');
+                
+                // Mostrar la pestaña correspondiente
+                const targetTab = this.getAttribute('data-tab');
                 document.getElementById(`tab-${targetTab}`).classList.add('active');
-                const label = item.querySelector('.nav-label').innerText;
+                
+                // Actualizar título
+                const label = this.querySelector('.nav-label').innerText;
                 document.getElementById('appTitle').innerText = label;
                 
+                // Mostrar/ocultar FAB
                 const fab = document.getElementById('fabBtn');
                 if (targetTab === 'inicio') {
                     fab.classList.remove('hidden');
@@ -578,6 +660,7 @@
                     fab.classList.add('hidden');
                 }
                 
+                // Renderizar servicios si es necesario
                 if (targetTab === 'servicios') {
                     renderServices();
                 }
@@ -696,7 +779,6 @@
             
             let valid = true;
             
-            // Validar tipo de servicio
             if (!type) {
                 document.getElementById('serviceTypeError').classList.add('show');
                 valid = false;
@@ -704,7 +786,6 @@
                 document.getElementById('serviceTypeError').classList.remove('show');
             }
             
-            // Validar odómetro
             if (!serviceOdometer || serviceOdometer <= currentOdo) {
                 document.getElementById('serviceOdometerError').classList.add('show');
                 valid = false;
@@ -712,7 +793,6 @@
                 document.getElementById('serviceOdometerError').classList.remove('show');
             }
             
-            // Validar fecha
             if (!date) {
                 document.getElementById('serviceDateError').classList.add('show');
                 valid = false;
@@ -789,7 +869,6 @@
             loadData(); 
             updateUI(); 
             
-            // Verificar servicios al cargar
             setTimeout(() => {
                 const currentOdo = getCurrentOdometer();
                 appData.services.forEach(service => {

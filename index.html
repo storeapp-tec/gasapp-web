@@ -92,14 +92,94 @@
         .empty-state-mini { text-align: center; color: #999; padding: 30px 10px; font-size: 13px; }
         .section-label { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 
-        /* Servicios */
-        .service-item { background: white; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; }
-        .service-status-badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
-        .status-green { background: #d1fae5; color: #065f46; }
-        .status-yellow { background: #fef3c7; color: #92400e; }
-        .status-red { background: #fecaca; color: #991b1b; }
-        .service-delete-btn { background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer; padding: 4px; }
-        .service-delete-btn:hover { color: #dc2626; }
+        /* Servicios - NUEVO DISEÑO */
+        .service-item {
+            background: white;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .service-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .service-type {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .service-date {
+            font-size: 12px;
+            color: #888;
+        }
+        .service-km-restante {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .service-km-restante.green { background: #d1fae5; color: #065f46; }
+        .service-km-restante.yellow { background: #fef3c7; color: #92400e; }
+        .service-km-restante.red { background: #fecaca; color: #991b1b; }
+        .service-km-restante.done { background: #d1fae5; color: #065f46; }
+        .service-odo-final {
+            font-size: 13px;
+            color: #444;
+            font-weight: 500;
+        }
+        .service-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .service-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .service-btn:hover { background: #f0f2f5; }
+        .service-btn.delete { color: #dc2626; }
+        .service-btn.edit { color: #667eea; }
+        .service-btn.done-btn {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .service-btn.done-btn:hover { background: #5a6fd6; }
+
+        .service-divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 8px 0;
+        }
+
+        .service-status-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .status-pendiente { background: #fef3c7; color: #92400e; }
+        .status-realizado { background: #d1fae5; color: #065f46; }
 
         .add-service-btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px; }
         .add-service-btn:hover { background: #5a6fd6; }
@@ -128,17 +208,6 @@
         #toast.success { background: #10b981; }
         #toast.error { background: #ef4444; }
         #toast.saving { background: #667eea; }
-
-        /* Estilos para servicios con estado */
-        .service-status-text {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-        .status-pendiente { background: #fef3c7; color: #92400e; }
-        .status-realizado { background: #d1fae5; color: #065f46; }
-        .service-completed-date { font-size: 11px; color: #888; margin-left: 4px; }
     </style>
 </head>
 <body>
@@ -288,7 +357,7 @@
         // ============================================
         // CONFIGURACIÓN
         // ============================================
-        const CLOUD_URL = 'https://script.google.com/macros/s/AKfycbxhVskxe21f9k4ot7sFyZSSzkprEZTKYi4Q1naGeV8GbaIUu7f-0Af6_j61fgdDRnvp/exec';
+        const CLOUD_URL = 'https://script.google.com/macros/s/AKfycbxq9p7ACA1TWykKEpsu08Xt4ZK-usyFY_dtUPnjGHEn-8q3y_FwIkqITDo3qtFW46KP/exec';
         let appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
         const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         let toastTimeout = null;
@@ -303,7 +372,58 @@
             clearTimeout(toastTimeout);
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('show');
-            }, 2000);
+            }, 2500);
+        }
+
+        // ============================================
+        // FORMATO DE FECHAS (CORREGIDO)
+        // ============================================
+        function formatDateShort(d) {
+            if (!d) return '';
+            
+            // Si es string en formato largo (GMT)
+            if (typeof d === 'string' && d.includes('GMT')) {
+                const date = new Date(d);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = mesesNombres[date.getMonth()];
+                const year = String(date.getFullYear()).slice(2);
+                return `${day}-${month}-${year}`;
+            }
+            
+            // Si es objeto Date
+            if (d instanceof Date) {
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = mesesNombres[d.getMonth()];
+                const year = String(d.getFullYear()).slice(2);
+                return `${day}-${month}-${year}`;
+            }
+            
+            // Si es YYYY-MM-DD
+            if (typeof d === 'string' && d.match(/^\d{4}-\d{2}-\d{2}/)) {
+                const parts = d.split('-');
+                return `${parts[2]}-${mesesNombres[parseInt(parts[1])-1]}-${parts[0].substring(2)}`;
+            }
+            
+            // Si es DD-MMM-YY (ya formateado)
+            return d;
+        }
+
+        function formatDateForExcel(d) {
+            if (!d) return '';
+            if (typeof d === 'string' && d.match(/^\d{4}-\d{2}-\d{2}/)) return d;
+            if (d instanceof Date) return d.toISOString().split('T')[0];
+            
+            // Si es string en formato largo, convertir a YYYY-MM-DD
+            if (typeof d === 'string' && d.includes('GMT')) {
+                const date = new Date(d);
+                return date.toISOString().split('T')[0];
+            }
+            
+            return d;
+        }
+
+        function getDateValue(inputId) {
+            return document.getElementById(inputId).value; // Ya viene en YYYY-MM-DD
         }
 
         // ============================================
@@ -312,10 +432,24 @@
         async function saveData() {
             showToast('⏳ Guardando...', 'saving');
             try {
+                // Asegurar que las fechas estén en formato YYYY-MM-DD antes de enviar
+                const dataToSend = {
+                    carName: appData.carName,
+                    manualOdometer: appData.manualOdometer,
+                    fuels: appData.fuels.map(f => ({
+                        ...f,
+                        date: formatDateForExcel(f.date) || f.date
+                    })),
+                    services: appData.services.map(s => ({
+                        ...s,
+                        date: formatDateForExcel(s.date) || s.date
+                    }))
+                };
+                
                 const response = await fetch(CLOUD_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(appData)
+                    body: JSON.stringify(dataToSend)
                 });
                 if (!response.ok) throw new Error('Error: ' + response.status);
                 showToast('✅ Guardado en la nube', 'success');
@@ -356,7 +490,6 @@
         // FUNCIONES DE FORMATO
         // ============================================
         function formatNumber(n) { return new Intl.NumberFormat('es-MX').format(n); }
-        function formatDateShort(d) { if(!d) return ''; let p = d.split('-'); return p.length===3 ? `${p[2]}-${mesesNombres[parseInt(p[1])-1]}-${p[0].substring(2)}` : d; }
         function getCurrentOdometer() { 
             if (appData.manualOdometer !== null && appData.manualOdometer > 0) return appData.manualOdometer;
             if (appData.fuels.length) return Math.max(...appData.fuels.map(f => f.odometer));
@@ -465,13 +598,12 @@
                 }).join('');
             }
 
-            // SERVICIOS - ordenados: pendientes primero, realizados después
+            // SERVICIOS - NUEVO DISEÑO
             const slist = document.getElementById('servicesList');
             if (appData.services.length === 0) {
                 slist.innerHTML = `<div class="empty-state-mini">No hay servicios programados</div>`;
             } else {
                 const currentOdo = getCurrentOdometer();
-                // Ordenar: pendientes primero, luego realizados
                 const sortedServices = [...appData.services].sort((a, b) => {
                     if (a.status === 'pendiente' && b.status !== 'pendiente') return -1;
                     if (a.status !== 'pendiente' && b.status === 'pendiente') return 1;
@@ -483,44 +615,53 @@
 
                 sortedServices.forEach(s => {
                     const diff = s.serviceOdometer - currentOdo;
-                    let badgeClass, emoji, kmDisplay, statusText;
+                    let badgeClass, kmDisplay, statusText, kmClass;
 
                     if (s.status === 'realizado') {
-                        badgeClass = 'status-realizado';
-                        emoji = '✅';
-                        kmDisplay = 'Realizado';
+                        kmClass = 'done';
+                        kmDisplay = '✅ Realizado';
                         statusText = 'Realizado';
                     } else {
-                        // Pendiente - calcular semáforo
+                        // Pendiente - semáforo
                         if (diff > 1000) {
-                            badgeClass = 'status-green';
-                            emoji = '🟢';
+                            kmClass = 'green';
+                            kmDisplay = `🟢 ${formatNumber(diff)} km`;
                         } else if (diff > 500) {
-                            badgeClass = 'status-yellow';
-                            emoji = '🟡';
+                            kmClass = 'yellow';
+                            kmDisplay = `🟡 ${formatNumber(diff)} km`;
                         } else {
-                            badgeClass = 'status-red';
-                            emoji = '🔴';
+                            kmClass = 'red';
+                            kmDisplay = diff > 0 ? `🔴 ${formatNumber(diff)} km` : '🔴 VENCIDO';
                         }
-                        kmDisplay = diff > 0 ? `${formatNumber(diff)} km` : 'VENCIDO';
                         statusText = 'Pendiente';
                     }
 
                     const itemHtml = `
                         <div class="service-item">
-                            <span>
-                                <b>${s.type}</b>
-                                <span style="font-size:12px; color:#666;">📅 ${formatDateShort(s.date)}</span>
-                                ${s.status === 'pendiente' ? 
-                                    `<button onclick="markServiceDone('${s.id}')" style="margin-left:8px; padding:2px 8px; border:1px solid #667eea; background:white; color:#667eea; border-radius:6px; font-size:11px; cursor:pointer;">✅ Marcar realizado</button>` 
-                                    : 
-                                    `<span class="service-status-text status-realizado">✅ Realizado</span>`
-                                }
-                            </span>
-                            <span>
-                                <span class="service-status-badge ${badgeClass}">${emoji} ${kmDisplay}</span>
-                                <button class="service-delete-btn" onclick="deleteService('${s.id}')">✕</button>
-                            </span>
+                            <div class="service-row">
+                                <div class="service-info">
+                                    <span class="service-date">📅 ${formatDateShort(s.date)}</span>
+                                    <span class="service-type">${s.type}</span>
+                                    <span class="service-km-restante ${kmClass}">${kmDisplay}</span>
+                                    <span class="service-odo-final">📌 ${formatNumber(s.serviceOdometer)} km</span>
+                                </div>
+                                <div class="service-actions">
+                                    ${s.status === 'pendiente' ? 
+                                        `<button class="service-btn edit" onclick="editService('${s.id}')" title="Editar">✏️</button>` : 
+                                        ''
+                                    }
+                                    <button class="service-btn delete" onclick="deleteService('${s.id}')" title="Eliminar">✕</button>
+                                </div>
+                            </div>
+                            ${s.status === 'pendiente' ? 
+                                `<div class="service-row" style="margin-top:4px;">
+                                    <button class="service-btn done-btn" onclick="markServiceDone('${s.id}')">✅ Marcar realizado</button>
+                                    <span class="service-status-badge status-pendiente">⏳ Pendiente</span>
+                                </div>` :
+                                `<div class="service-row" style="margin-top:4px;">
+                                    <span class="service-status-badge status-realizado">✅ Realizado</span>
+                                </div>`
+                            }
                         </div>
                     `;
 
@@ -590,12 +731,13 @@
             let id = document.getElementById('editFuelIndex').value;
             let l = parseFloat(document.getElementById('fuelLiters').value); 
             let p = parseFloat(document.getElementById('fuelPrice').value);
+            let dateValue = document.getElementById('fuelDate').value; // YYYY-MM-DD
             let itm = { 
                 id: id || 'f_'+Date.now(), 
                 odometer: parseInt(document.getElementById('fuelOdometer').value), 
                 liters: l, 
                 pricePerLiter: p, 
-                date: document.getElementById('fuelDate').value, 
+                date: dateValue, 
                 totalCost: l*p 
             };
             if(id) { 
@@ -669,26 +811,30 @@
         function saveService() {
             let type = document.getElementById('serviceType').value.trim();
             let odo = parseInt(document.getElementById('serviceOdometer').value);
-            let date = document.getElementById('serviceDate').value;
+            let dateValue = document.getElementById('serviceDate').value; // YYYY-MM-DD
             const currentOdo = getCurrentOdometer();
             
-            // Validar que el odómetro sea mayor al actual
             if (odo <= currentOdo) {
                 showToast('❌ El odómetro debe ser mayor al actual', 'error');
                 return;
             }
             
-            if(type && odo > 0 && date) {
+            if(type && odo > 0 && dateValue) {
                 appData.services.push({ 
                     id: 's_'+Date.now(), 
                     type: type, 
                     serviceOdometer: odo, 
-                    date: date,
+                    date: dateValue,
                     status: 'pendiente'
                 });
                 toggleModal('serviceModal','close'); 
                 saveData();
             }
+        }
+
+        function editService(id) {
+            // Por implementar - editar servicio
+            showToast('✏️ Editar servicio (próximamente)', 'saving');
         }
 
         function markServiceDone(id) {

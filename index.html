@@ -43,7 +43,7 @@
         .history-grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
         .history-summary-card { background: white; border-radius: 10px; padding: 8px 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .h-card-title { font-size: 10px; text-transform: uppercase; color: #999; font-weight: 600; margin-bottom: 2px; }
-        .h-card-value { font-size: 14px; font-weight: 700; color: #667eea; }
+        .h-card-value { font-size: 16px; font-weight: 700; color: #667eea; }
 
         .month-select-container { margin-bottom: 10px; display: flex; justify-content: center; }
         .month-select { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 13px; font-weight: 600; color: #444; background: white; outline: none; }
@@ -53,7 +53,6 @@
         .history-row1 { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; margin-bottom: 2px; }
         .history-date { font-size: 13px; font-weight: 500; color: #444; text-align: left; }
         .history-km { font-size: 14px; font-weight: 600; text-align: center; }
-        .history-km-diff { font-size: 12px; color: #10b981; font-weight: 500; margin-left: 4px; }
         .history-km-right { text-align: right; }
         .history-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; font-size: 13px; color: #666; margin-top: 2px; }
         .history-consumption-badge { font-weight: 600; padding: 2px 6px; border-radius: 4px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
@@ -74,7 +73,6 @@
         .field-group label { display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 4px; }
         .field-group input { width: 100%; padding: 10px 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #fafafa; }
         .field-group input::placeholder { color: #999; }
-        .field-group .ref-odometer { font-size: 12px; color: #667eea; font-weight: 600; margin-top: 4px; }
 
         .modal-buttons { display: flex; gap: 10px; margin-top: 18px; }
         .btn-modal { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
@@ -92,7 +90,6 @@
         .nav-label { font-size: 11px; }
 
         .empty-state-mini { text-align: center; color: #999; padding: 30px 10px; font-size: 13px; }
-
         .section-label { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 
         /* Servicios */
@@ -106,6 +103,42 @@
 
         .add-service-btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px; }
         .add-service-btn:hover { background: #5a6fd6; }
+
+        /* TOAST */
+        #toast {
+            position: fixed;
+            bottom: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 99999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        #toast.success { background: #10b981; }
+        #toast.error { background: #ef4444; }
+        #toast.saving { background: #667eea; }
+
+        /* Estilos para servicios con estado */
+        .service-status-text {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .status-pendiente { background: #fef3c7; color: #92400e; }
+        .status-realizado { background: #d1fae5; color: #065f46; }
+        .service-completed-date { font-size: 11px; color: #888; margin-left: 4px; }
     </style>
 </head>
 <body>
@@ -115,6 +148,9 @@
             <div class="header-left"><span class="icon">⛽</span><span class="app-name">GasApp</span></div>
             <div class="header-right"><span class="header-title" id="appTitle">Resumen</span></div>
         </header>
+
+        <!-- TOAST -->
+        <div id="toast"></div>
 
         <!-- TAB RESUMEN -->
         <div id="tab-inicio" class="tab-content active">
@@ -162,7 +198,7 @@
         </nav>
     </div>
 
-    <!-- MODAL CARGA -->
+    <!-- MODALES -->
     <div class="modal" id="fuelModal">
         <div class="modal-content">
             <div class="modal-title" id="fuelModalTitle">Nueva Carga</div>
@@ -196,7 +232,6 @@
         </div>
     </div>
 
-    <!-- MODAL NOMBRE -->
     <div class="modal" id="nameModal">
         <div class="modal-content">
             <div class="modal-title">Editar Nombre del Auto</div>
@@ -211,7 +246,6 @@
         </div>
     </div>
 
-    <!-- MODAL ODÓMETRO -->
     <div class="modal" id="odoModal">
         <div class="modal-content">
             <div class="modal-title">Editar Odómetro</div>
@@ -226,7 +260,6 @@
         </div>
     </div>
 
-    <!-- MODAL SERVICIO -->
     <div class="modal" id="serviceModal">
         <div class="modal-content">
             <div class="modal-title">Agregar Servicio</div>
@@ -237,8 +270,7 @@
                 </div>
                 <div class="field-group">
                     <label>Odómetro de Servicio (km)</label>
-                    <input type="number" id="serviceOdometer" step="1" required>
-                    <div class="ref-odometer" id="serviceOdometerRef">Odómetro actual: 0 km</div>
+                    <input type="number" id="serviceOdometer" step="1" placeholder="Odómetro actual: 0 km" required>
                 </div>
                 <div class="field-group">
                     <label>Fecha de Ingreso</label>
@@ -254,34 +286,70 @@
 
     <script>
         // ============================================
-        // EXCEL SYNC - NO TOCAR (funciona perfecto)
+        // CONFIGURACIÓN
         // ============================================
         const CLOUD_URL = 'https://script.google.com/macros/s/AKfycbxq9p7ACA1TWykKEpsu08Xt4ZK-usyFY_dtUPnjGHEn-8q3y_FwIkqITDo3qtFW46KP/exec';
         let appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
         const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+        let toastTimeout = null;
 
+        // ============================================
+        // TOAST
+        // ============================================
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = type + ' show';
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // ============================================
+        // EXCEL SYNC
+        // ============================================
         async function saveData() {
-            localStorage.setItem('gas_app_data', JSON.stringify(appData));
-            updateUI();
-            try { fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(appData) }); } catch (e) {}
+            showToast('⏳ Guardando...', 'saving');
+            try {
+                const response = await fetch(CLOUD_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appData)
+                });
+                if (!response.ok) throw new Error('Error: ' + response.status);
+                showToast('✅ Guardado en la nube', 'success');
+            } catch (e) {
+                console.error('Error al guardar:', e);
+                showToast('❌ Error al guardar', 'error');
+            }
         }
 
         async function loadData() {
-            const saved = localStorage.getItem('gas_app_data');
-            if (saved) { 
-                try { appData = JSON.parse(saved); } catch(e) {}
-                updateUI(); 
-            }
+            showToast('⏳ Cargando...', 'saving');
             try {
-                const res = await fetch(CLOUD_URL);
-                const cloud = await res.json();
-                if (cloud && cloud.fuels) { 
-                    appData = cloud; 
+                const response = await fetch(CLOUD_URL);
+                if (!response.ok) throw new Error('Error: ' + response.status);
+                const cloud = await response.json();
+                
+                if (cloud && cloud.fuels && Array.isArray(cloud.fuels)) {
+                    appData = cloud;
                     if (!appData.services) appData.services = [];
                     if (!appData.fuels) appData.fuels = [];
-                    updateUI(); 
+                    if (!appData.carName) appData.carName = 'Mi Auto';
+                    updateUI();
+                    showToast('✅ Datos cargados', 'success');
+                } else {
+                    appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
+                    updateUI();
+                    showToast('📝 Sin datos previos', 'success');
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error('Error al cargar:', e);
+                showToast('❌ Error al cargar datos', 'error');
+                appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
+                updateUI();
+            }
         }
 
         // ============================================
@@ -332,7 +400,7 @@
             document.getElementById('carNameDisplay').innerText = appData.carName;
             document.getElementById('mainOdometer').innerText = formatNumber(getCurrentOdometer());
 
-            // INICIO - Últimas Cargas
+            // INICIO
             const latest = document.getElementById('latestFuelContainer');
             if (view.length === 0) {
                 latest.innerHTML = `<div class="empty-state-mini">No hay registros</div>`;
@@ -349,7 +417,7 @@
                 }).join('');
             }
 
-            // HISTORIAL - Selector de meses
+            // HISTORIAL
             const sel = document.getElementById('monthSelect').value || 'todos';
             let mSet = new Set(); 
             appData.fuels.forEach(f => { if(f.date) mSet.add(f.date.substring(0,7)); });
@@ -361,7 +429,6 @@
             document.getElementById('monthSelect').innerHTML = mHtml; 
             document.getElementById('monthSelect').value = sel;
 
-            // HISTORIAL - Filtrado
             let fView = sel === "todos" ? view : view.filter(f => f.date && f.date.startsWith(sel));
             let fChrono = sel === "todos" ? chrono : chrono.filter(f => f.date && f.date.startsWith(sel));
 
@@ -374,7 +441,6 @@
             document.getElementById('summaryLiters').innerText = lit.toFixed(1) + ' L';
             document.getElementById('summaryAvg').innerText = (km>0 && lit>0) ? (km/lit).toFixed(1)+' km/L' : '0.0';
 
-            // HISTORIAL - Lista de cargas (3 columnas: fecha | KM | diff)
             const historyList = document.getElementById('historyList');
             if (fView.length === 0) {
                 historyList.innerHTML = `<div class="empty-state-mini">Sin registros</div>`;
@@ -399,28 +465,83 @@
                 }).join('');
             }
 
-            // SERVICIOS
+            // SERVICIOS - ordenados: pendientes primero, realizados después
             const slist = document.getElementById('servicesList');
             if (appData.services.length === 0) {
                 slist.innerHTML = `<div class="empty-state-mini">No hay servicios programados</div>`;
             } else {
                 const currentOdo = getCurrentOdometer();
-                slist.innerHTML = appData.services.map(s => {
-                    let diff = s.serviceOdometer - currentOdo;
-                    let badgeClass = diff < 500 ? 'status-red' : (diff < 1000 ? 'status-yellow' : 'status-green');
-                    let emoji = diff < 500 ? '🔴' : (diff < 1000 ? '🟡' : '🟢');
-                    let kmDisplay = diff > 0 ? `${formatNumber(diff)} km` : 'VENCIDO';
-                    return `<div class="service-item">
-                        <span><b>${s.type}</b> <span style="font-size:12px; color:#666;">📅 ${formatDateShort(s.date)}</span></span>
-                        <span>
-                            <span class="service-status-badge ${badgeClass}">${emoji} ${kmDisplay}</span>
-                            <button class="service-delete-btn" onclick="deleteService('${s.id}')">✕</button>
-                        </span>
-                    </div>`;
-                }).join('');
+                // Ordenar: pendientes primero, luego realizados
+                const sortedServices = [...appData.services].sort((a, b) => {
+                    if (a.status === 'pendiente' && b.status !== 'pendiente') return -1;
+                    if (a.status !== 'pendiente' && b.status === 'pendiente') return 1;
+                    return a.serviceOdometer - b.serviceOdometer;
+                });
+
+                let pendientesHtml = '';
+                let realizadosHtml = '';
+
+                sortedServices.forEach(s => {
+                    const diff = s.serviceOdometer - currentOdo;
+                    let badgeClass, emoji, kmDisplay, statusText;
+
+                    if (s.status === 'realizado') {
+                        badgeClass = 'status-realizado';
+                        emoji = '✅';
+                        kmDisplay = 'Realizado';
+                        statusText = 'Realizado';
+                    } else {
+                        // Pendiente - calcular semáforo
+                        if (diff > 1000) {
+                            badgeClass = 'status-green';
+                            emoji = '🟢';
+                        } else if (diff > 500) {
+                            badgeClass = 'status-yellow';
+                            emoji = '🟡';
+                        } else {
+                            badgeClass = 'status-red';
+                            emoji = '🔴';
+                        }
+                        kmDisplay = diff > 0 ? `${formatNumber(diff)} km` : 'VENCIDO';
+                        statusText = 'Pendiente';
+                    }
+
+                    const itemHtml = `
+                        <div class="service-item">
+                            <span>
+                                <b>${s.type}</b>
+                                <span style="font-size:12px; color:#666;">📅 ${formatDateShort(s.date)}</span>
+                                ${s.status === 'pendiente' ? 
+                                    `<button onclick="markServiceDone('${s.id}')" style="margin-left:8px; padding:2px 8px; border:1px solid #667eea; background:white; color:#667eea; border-radius:6px; font-size:11px; cursor:pointer;">✅ Marcar realizado</button>` 
+                                    : 
+                                    `<span class="service-status-text status-realizado">✅ Realizado</span>`
+                                }
+                            </span>
+                            <span>
+                                <span class="service-status-badge ${badgeClass}">${emoji} ${kmDisplay}</span>
+                                <button class="service-delete-btn" onclick="deleteService('${s.id}')">✕</button>
+                            </span>
+                        </div>
+                    `;
+
+                    if (s.status === 'pendiente') {
+                        pendientesHtml += itemHtml;
+                    } else {
+                        realizadosHtml += itemHtml;
+                    }
+                });
+
+                let finalHtml = '';
+                if (pendientesHtml) {
+                    finalHtml += `<div style="font-size:12px; font-weight:600; color:#666; margin-bottom:6px; margin-top:4px;">📌 Pendientes</div>${pendientesHtml}`;
+                }
+                if (realizadosHtml) {
+                    finalHtml += `<div style="font-size:12px; font-weight:600; color:#666; margin-bottom:6px; margin-top:12px;">✅ Realizados</div>${realizadosHtml}`;
+                }
+                slist.innerHTML = finalHtml;
             }
 
-            // Mostrar/ocultar FAB (solo en Resumen)
+            // FAB
             const activeTab = document.querySelector('.tab-content.active');
             const fab = document.getElementById('fabBtn');
             if (activeTab && activeTab.id === 'tab-inicio') {
@@ -439,7 +560,6 @@
                 this.classList.add('active');
                 document.getElementById('tab-'+this.dataset.tab).classList.add('active');
                 document.getElementById('appTitle').innerText = this.querySelector('.nav-label').innerText;
-                // Actualizar visibilidad del FAB
                 updateUI();
             };
         });
@@ -461,7 +581,6 @@
             document.getElementById('deleteFuelBtn').style.display = 'none'; 
             document.getElementById('fuelModalTitle').innerText = 'Nueva Carga';
             document.getElementById('liveTotal').innerText = '$0.00';
-            // PRECARGAR odómetro y precio
             document.getElementById('fuelOdometer').value = getLastFuelOdometer();
             document.getElementById('fuelPrice').value = getLastFuelPrice();
             toggleModal('fuelModal','open'); 
@@ -516,7 +635,7 @@
         };
 
         // ============================================
-        // ODÓMETRO (con precarga y color morado)
+        // ODÓMETRO
         // ============================================
         function openOdoModal() {
             document.getElementById('odoInput').value = getCurrentOdometer();
@@ -537,12 +656,13 @@
         }
 
         // ============================================
-        // SERVICIOS (con odómetro actual como referencia)
+        // SERVICIOS
         // ============================================
         function openServiceModal() {
             document.getElementById('serviceForm').reset();
             document.getElementById('serviceDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('serviceOdometerRef').innerText = `Odómetro actual: ${formatNumber(getCurrentOdometer())} km`;
+            const currentOdo = getCurrentOdometer();
+            document.getElementById('serviceOdometer').placeholder = `Odómetro actual: ${formatNumber(currentOdo)} km`;
             toggleModal('serviceModal','open');
         }
 
@@ -550,15 +670,34 @@
             let type = document.getElementById('serviceType').value.trim();
             let odo = parseInt(document.getElementById('serviceOdometer').value);
             let date = document.getElementById('serviceDate').value;
+            const currentOdo = getCurrentOdometer();
+            
+            // Validar que el odómetro sea mayor al actual
+            if (odo <= currentOdo) {
+                showToast('❌ El odómetro debe ser mayor al actual', 'error');
+                return;
+            }
+            
             if(type && odo > 0 && date) {
                 appData.services.push({ 
                     id: 's_'+Date.now(), 
                     type: type, 
                     serviceOdometer: odo, 
-                    date: date 
+                    date: date,
+                    status: 'pendiente'
                 });
                 toggleModal('serviceModal','close'); 
                 saveData();
+            }
+        }
+
+        function markServiceDone(id) {
+            if (confirm('¿Marcar este servicio como REALIZADO?')) {
+                const service = appData.services.find(s => s.id === id);
+                if (service) {
+                    service.status = 'realizado';
+                    saveData();
+                }
             }
         }
 
@@ -570,7 +709,7 @@
         }
 
         // ============================================
-        // FILTRO DE MESES (arreglado)
+        // FILTRO MESES
         // ============================================
         document.getElementById('monthSelect').addEventListener('change', function() {
             updateUI();

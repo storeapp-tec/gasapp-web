@@ -118,27 +118,36 @@
         .add-service-btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px; }
         .add-service-btn:hover { background: #5a6fd6; }
 
-        /* TOAST */
+        /* TOAST - MENSAJE MEJORADO */
         #toast {
             position: fixed;
-            bottom: 140px;
+            bottom: 100px;
             left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 24px;
-            border-radius: 12px;
+            transform: translateX(-50%) translateY(20px);
+            padding: 14px 28px;
+            border-radius: 16px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 15px;
             color: white;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 99999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            text-align: center;
+            max-width: 90%;
+            line-height: 1.5;
         }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        #toast.show { 
+            opacity: 1; 
+            transform: translateX(-50%) translateY(0);
+        }
         #toast.success { background: #10b981; }
         #toast.error { background: #ef4444; }
         #toast.saving { background: #667eea; }
+        #toast.delete { background: #dc2626; }
+        #toast.warning { background: #f59e0b; }
+        #toast .icon { margin-right: 10px; font-size: 20px; }
     </style>
 </head>
 <body>
@@ -264,14 +273,31 @@
         let isSaving = false;
 
         // ============================================================
-        // TOAST
+        // TOAST MEJORADO
         // ============================================================
-        function showToast(message, type = 'success') {
+        function showToast(message, type = 'success', duration = 2500) {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = type + ' show';
+            // Limpiar timeout anterior
             clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
+            
+            // Construir el mensaje con icono
+            let icon = '';
+            switch(type) {
+                case 'success': icon = '✅'; break;
+                case 'error': icon = '❌'; break;
+                case 'saving': icon = '⏳'; break;
+                case 'delete': icon = '🗑️'; break;
+                case 'warning': icon = '⚠️'; break;
+                default: icon = '📌';
+            }
+            
+            toast.innerHTML = `<span class="icon">${icon}</span> ${message}`;
+            toast.className = type + ' show';
+            
+            // Ocultar después de la duración especificada
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
         }
 
         // ============================================================
@@ -356,30 +382,28 @@
         }
 
         // ============================================================
-        // EXCEL SYNC - CON NO-CORS (para evitar CORS)
+        // EXCEL SYNC - CON NO-CORS
         // ============================================================
         async function callAction(action, data) {
             if (isSaving) {
-                showToast('⏳ Espera a que termine la operación actual', 'saving');
+                showToast('⏳ Espera a que termine la operación actual', 'warning');
                 return null;
             }
             isSaving = true;
-            showToast('⏳ Guardando...', 'saving');
+            showToast('⏳ Procesando...', 'saving');
             
             try {
                 const payload = { accion: action, datos: data };
                 console.log('📤 Enviando:', payload);
                 
-                // Usamos mode: 'no-cors' para evitar el error CORS
                 await fetch(URL_API, {
                     method: 'POST',
-                    mode: 'no-cors',  // ← ESTO EVITA EL ERROR CORS
+                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
-                // Con no-cors no podemos leer la respuesta, pero los datos llegan
-                showToast('✅ Datos enviados', 'success');
+                showToast('✅ Operación completada', 'success');
                 return { status: 'OK' };
             } catch (error) {
                 console.error('❌ Error:', error);
@@ -391,7 +415,7 @@
         }
 
         async function loadData() {
-            showToast('⏳ Cargando...', 'saving');
+            showToast('⏳ Cargando datos...', 'saving', 3000);
             try {
                 const response = await fetch(URL_API);
                 const data = await response.json();
@@ -407,11 +431,11 @@
                     appData.services.forEach(s => { if (!s.id) s.id = 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6); });
                     
                     updateUI();
-                    showToast('✅ Datos cargados', 'success');
+                    showToast('✅ Datos cargados correctamente', 'success');
                 } else {
                     appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
                     updateUI();
-                    showToast('📝 Sin datos previos', 'success');
+                    showToast('📝 Sin datos previos', 'warning');
                 }
             } catch (e) {
                 console.error('Error al cargar:', e);
@@ -648,21 +672,22 @@
         }
 
         document.getElementById('deleteFuelBtn').onclick = async () => { 
-            if(confirm('¿Eliminar este registro?')) { 
+            if(confirm('⚠️ ¿Estás seguro de eliminar este registro?')) { 
                 const id = document.getElementById('editFuelIndex').value;
                 const fuel = appData.fuels.find(f => f.id === id);
                 if (fuel) {
+                    // Usar el odómetro como identificador (más confiable que la fecha)
                     const result = await callAction('deleteFuel', {
-                        date: fuel.date,
+                        date: formatDateForExcel(fuel.date),
                         odometer: fuel.odometer
                     });
                     if (result && result.status === 'OK') {
                         appData.fuels = appData.fuels.filter(f => f.id !== id);
                         toggleModal('fuelModal','close');
                         updateUI();
-                        showToast('✅ Registro eliminado', 'success');
+                        showToast('🗑️ Registro eliminado correctamente', 'delete');
                     } else {
-                        showToast('❌ Error al eliminar', 'error');
+                        showToast('❌ Error al eliminar: ' + (result?.mensaje || 'desconocido'), 'error');
                     }
                 }
             } 
@@ -766,11 +791,11 @@
         }
 
         function editService(id) {
-            showToast('✏️ Editar servicio (próximamente)', 'saving');
+            showToast('✏️ Editar servicio (próximamente)', 'warning');
         }
 
         async function markServiceDone(id) {
-            if (confirm('¿Marcar este servicio como REALIZADO?')) {
+            if (confirm('✅ ¿Marcar este servicio como REALIZADO?')) {
                 const service = appData.services.find(s => s.id === id);
                 if (service) {
                     const result = await callAction('markServiceDone', {
@@ -789,7 +814,7 @@
         }
 
         async function deleteService(id) { 
-            if(confirm('¿Eliminar este servicio?')) { 
+            if(confirm('⚠️ ¿Estás seguro de eliminar este servicio?')) { 
                 const service = appData.services.find(s => s.id === id);
                 if (service) {
                     const result = await callAction('deleteService', {
@@ -799,7 +824,7 @@
                     if (result && result.status === 'OK') {
                         appData.services = appData.services.filter(s => s.id !== id);
                         updateUI();
-                        showToast('✅ Servicio eliminado', 'success');
+                        showToast('🗑️ Servicio eliminado correctamente', 'delete');
                     } else {
                         showToast('❌ Error al eliminar', 'error');
                     }

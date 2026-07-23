@@ -92,7 +92,6 @@
         .empty-state-mini { text-align: center; color: #999; padding: 30px 10px; font-size: 13px; }
         .section-label { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 
-        /* Servicios */
         .service-item { background: white; border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 4px; }
         .service-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
         .service-info { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -118,7 +117,6 @@
         .add-service-btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px; }
         .add-service-btn:hover { background: #5a6fd6; }
 
-        /* TOAST */
         #toast {
             position: fixed;
             bottom: 100px;
@@ -146,7 +144,6 @@
         #toast.warning { background: #f59e0b; }
         #toast .icon { margin-right: 10px; font-size: 20px; }
 
-        /* MODAL DE CONFIRMACIÓN BONITO */
         #confirmModal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -200,7 +197,6 @@
 
         <div id="toast"></div>
 
-        <!-- MODAL DE CONFIRMACIÓN BONITO -->
         <div id="confirmModal">
             <div class="confirm-box">
                 <span class="confirm-icon">🗑️</span>
@@ -325,7 +321,6 @@
         const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         let toastTimeout = null;
         let isSaving = false;
-        let confirmCallback = null;
 
         // ============================================================
         // TOAST
@@ -352,6 +347,8 @@
         // ============================================================
         // MODAL DE CONFIRMACIÓN
         // ============================================================
+        let confirmCallback = null;
+
         function showConfirmModal(message, onConfirm) {
             const modal = document.getElementById('confirmModal');
             const msg = document.getElementById('confirmMessage');
@@ -434,15 +431,22 @@
         // FUNCIONES DE FORMATO
         // ============================================================
         function formatNumber(n) { return new Intl.NumberFormat('es-MX').format(n); }
-        function getCurrentOdometer() { 
-            if (appData.manualOdometer !== null && appData.manualOdometer > 0) return appData.manualOdometer;
-            if (appData.fuels.length) return Math.max(...appData.fuels.map(f => f.odometer));
-            return 0; 
+
+        function getCurrentOdometer() {
+            let odo = 0;
+            if (appData.manualOdometer !== null && appData.manualOdometer > 0) {
+                odo = appData.manualOdometer;
+            } else if (appData.fuels.length > 0) {
+                odo = Math.max(...appData.fuels.map(f => f.odometer));
+            }
+            return odo;
         }
+
         function getLastFuelOdometer() {
             if (!appData.fuels.length) return 0;
             return appData.fuels[appData.fuels.length - 1].odometer;
         }
+
         function getLastFuelPrice() {
             if (!appData.fuels.length) return 0;
             return appData.fuels[appData.fuels.length - 1].pricePerLiter || 0;
@@ -467,7 +471,7 @@
         }
 
         // ============================================================
-        // EXCEL SYNC - CON NO-CORS
+        // EXCEL SYNC
         // ============================================================
         async function callAction(action, data) {
             if (isSaving) {
@@ -499,9 +503,6 @@
             }
         }
 
-        // ============================================================
-        // loadData - SOLO EXCEL, SIN LOCALSTORAGE
-        // ============================================================
         async function loadData() {
             showToast('⏳ Cargando datos desde Excel...', 'saving', 3000);
             try {
@@ -536,7 +537,7 @@
         }
 
         // ============================================================
-        // UPDATE UI - CORREGIDA (FILTRO Y TARJETAS FUNCIONALES)
+        // UPDATE UI
         // ============================================================
         function updateUI() {
             try {
@@ -581,7 +582,7 @@
                 let fView = sel === "todos" ? view : view.filter(f => f.date && f.date.startsWith(sel));
                 let fChrono = sel === "todos" ? chrono : chrono.filter(f => f.date && f.date.startsWith(sel));
 
-                // TARJETAS DE RESUMEN (CON FILTRO)
+                // TARJETAS DE RESUMEN
                 let km = fChrono.reduce((s, f) => s + (f.kmDiff || 0), 0);
                 let cost = fChrono.reduce((s, f) => s + (f.totalCost || 0), 0);
                 let lit = fChrono.reduce((s, f) => s + (f.liters || 0), 0);
@@ -591,7 +592,7 @@
                 document.getElementById('summaryLiters').innerText = lit.toFixed(1) + ' L';
                 document.getElementById('summaryAvg').innerText = (km>0 && lit>0) ? (km/lit).toFixed(1)+' km/L' : '0.0';
 
-                // LISTA HISTORIAL (CON FILTRO)
+                // LISTA HISTORIAL
                 const historyList = document.getElementById('historyList');
                 if (fView.length === 0) {
                     historyList.innerHTML = `<div class="empty-state-mini">Sin registros</div>`;

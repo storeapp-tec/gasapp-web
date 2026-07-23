@@ -259,12 +259,13 @@
 
     <script>
         // ============================================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN - NUEVA URL ACTUALIZADA
         // ============================================================
-        const CLOUD_URL = 'https://script.google.com/macros/s/AKfycbzeyvt-HYhifTPO6WByy_-kgLDsnzpkOHBxA2if-FU2mje5W3S-_X18UmAwm06IZ2rA/exec';
+        const CLOUD_URL = 'https://script.google.com/macros/s/AKfycbwOwn8iyjeWIK7WiywZQ-Ph96NwDzQCmRKoBkRsylpMlhc4fO2ohppzIIkw5uQo7QUL/exec';
         let appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
         const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         let toastTimeout = null;
+        let isSaving = false;
 
         // ============================================================
         // TOAST
@@ -359,16 +360,31 @@
         }
 
         // ============================================================
-        // EXCEL SYNC - VERSIÓN SIMPLE (FUNCIONA)
+        // EXCEL SYNC - VERSIÓN SIMPLE Y FUNCIONAL
         // ============================================================
         async function saveData() {
+            if (isSaving) return;
+            isSaving = true;
             showToast('⏳ Guardando...', 'saving');
+            
             try {
+                // Enviar TODO (el script en Sheets se encarga de agregar solo lo nuevo)
                 const dataToSend = {
                     carName: appData.carName,
                     manualOdometer: appData.manualOdometer,
-                    fuels: appData.fuels.map(f => ({ ...f, date: formatDateForExcel(f.date) || f.date })),
-                    services: appData.services.map(s => ({ ...s, date: formatDateForExcel(s.date) || s.date }))
+                    fuels: appData.fuels.map(f => ({
+                        date: formatDateForExcel(f.date) || f.date,
+                        odometer: f.odometer,
+                        liters: f.liters,
+                        pricePerLiter: f.pricePerLiter,
+                        totalCost: f.totalCost
+                    })),
+                    services: appData.services.map(s => ({
+                        date: formatDateForExcel(s.date) || s.date,
+                        serviceOdometer: s.serviceOdometer,
+                        type: s.type,
+                        status: s.status || 'pendiente'
+                    }))
                 };
                 
                 const response = await fetch(CLOUD_URL, {
@@ -376,11 +392,20 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToSend)
                 });
-                if (!response.ok) throw new Error('Error: ' + response.status);
-                showToast('✅ Guardado en la nube', 'success');
+                
+                const text = await response.text();
+                if (text === 'OK') {
+                    showToast('✅ Guardado en la nube', 'success');
+                } else if (text.startsWith('ERROR')) {
+                    showToast('❌ ' + text, 'error');
+                } else {
+                    showToast('✅ Datos guardados', 'success');
+                }
             } catch (e) {
                 console.error('Error al guardar:', e);
                 showToast('❌ Error al guardar', 'error');
+            } finally {
+                isSaving = false;
             }
         }
 
@@ -389,13 +414,25 @@
             try {
                 const response = await fetch(CLOUD_URL);
                 if (!response.ok) throw new Error('Error: ' + response.status);
-                const cloud = await response.json();
+                
+                const text = await response.text();
+                let cloud;
+                try {
+                    cloud = JSON.parse(text);
+                } catch (e) {
+                    throw new Error('No es JSON válido: ' + text.substring(0, 50));
+                }
                 
                 if (cloud && cloud.fuels && Array.isArray(cloud.fuels)) {
                     appData = cloud;
                     if (!appData.services) appData.services = [];
                     if (!appData.fuels) appData.fuels = [];
                     if (!appData.carName) appData.carName = 'Mi Auto';
+                    
+                    // Asignar IDs a los registros existentes
+                    appData.fuels.forEach(f => { if (!f.id) f.id = 'f_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6); });
+                    appData.services.forEach(s => { if (!s.id) s.id = 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6); });
+                    
                     updateUI();
                     showToast('✅ Datos cargados', 'success');
                 } else {
@@ -405,7 +442,7 @@
                 }
             } catch (e) {
                 console.error('Error al cargar:', e);
-                showToast('❌ Error al cargar datos', 'error');
+                showToast('❌ Error al cargar datos: ' + e.message, 'error');
                 appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
                 updateUI();
             }
@@ -416,11 +453,12 @@
         // ============================================================
         function updateUI() {
             try {
-                appData.fuels.sort((a, b) => new Date(a.date) - new Date(b.date));
-                const chrono = calculateChrono(appData.fuels);
+                const fuels = appData.fuels || [];
+                fuels.sort((a, b) => new Date(a.date) - new Date(b.date));
+                const chrono = calculateChrono(fuels);
                 const view = [...chrono].reverse();
 
-                document.getElementById('carNameDisplay').innerText = appData.carName;
+                document.getElementById('carNameDisplay').innerText = appData.carName || 'Mi Auto';
                 document.getElementById('mainOdometer').innerText = formatNumber(getCurrentOdometer());
 
                 // INICIO
@@ -443,7 +481,7 @@
                 // HISTORIAL
                 const sel = document.getElementById('monthSelect').value || 'todos';
                 let mSet = new Set(); 
-                appData.fuels.forEach(f => { if(f.date) mSet.add(f.date.substring(0,7)); });
+                fuels.forEach(f => { if(f.date) mSet.add(f.date.substring(0,7)); });
                 let mHtml = '<option value="todos">Todos los meses</option>';
                 Array.from(mSet).sort().reverse().forEach(m => {
                     let p = m.split('-'); 
@@ -489,12 +527,13 @@
                 }
 
                 // SERVICIOS
+                const services = appData.services || [];
                 const slist = document.getElementById('servicesList');
-                if (appData.services.length === 0) {
+                if (services.length === 0) {
                     slist.innerHTML = `<div class="empty-state-mini">No hay servicios programados</div>`;
                 } else {
                     const currentOdo = getCurrentOdometer();
-                    const sortedServices = [...appData.services].sort((a, b) => {
+                    const sortedServices = [...services].sort((a, b) => {
                         if (a.status === 'pendiente' && b.status !== 'pendiente') return -1;
                         if (a.status !== 'pendiente' && b.status === 'pendiente') return 1;
                         return a.serviceOdometer - b.serviceOdometer;
@@ -605,7 +644,7 @@
             let p = parseFloat(document.getElementById('fuelPrice').value);
             let dateValue = document.getElementById('fuelDate').value;
             let itm = { 
-                id: id || 'f_'+Date.now(), 
+                id: id || 'f_' + Date.now(), 
                 odometer: parseInt(document.getElementById('fuelOdometer').value), 
                 liters: l, 
                 pricePerLiter: p, 
@@ -710,7 +749,7 @@
             
             if(type && odo > 0 && dateValue) {
                 appData.services.push({ 
-                    id: 's_'+Date.now(), 
+                    id: 's_' + Date.now(), 
                     type: type, 
                     serviceOdometer: odo, 
                     date: dateValue,

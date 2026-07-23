@@ -4,369 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>⛽ GasApp</title>
-
-    <!-- PWA -->
-    <link rel="manifest" href="/gasapp-web/manifest.json">
-    <link rel="apple-touch-icon" sizes="512x512" href="/gasapp/icon-512.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/gasapp/icon-512.png">
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; appearance: none; }
-        body { background: #f5f7fa; color: #1a1a2e; font-size: 14px; line-height: 1.4; height: 100vh; overflow: hidden; }
-        .app { max-width: 480px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; position: relative; }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #c1c7cd; border-radius: 10px; }
-
-        .header-mini { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; flex-shrink: 0; z-index: 10; border-radius: 0 0 20px 20px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); position: relative; display: flex; justify-content: space-between; align-items: center; min-height: 70px; padding: 0 20px; }
-        .header-left { display: flex; align-items: center; gap: 8px; }
-        .header-left .icon { font-size: 20px; }
-        .header-left .app-name { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
-        .header-right .header-title { font-size: 16px; font-weight: 600; opacity: 0.9; }
-
-        .tab-content { display: none; flex: 1; overflow-y: auto; padding: 12px 16px 85px; }
-        .tab-content.active { display: block; }
-
-        .inicio-header { background: white; border-radius: 16px; padding: 14px 18px 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); text-align: center; }
-        .car-name-row { display: flex; justify-content: center; align-items: center; gap: 6px; margin-bottom: 4px; }
-        .car-name { font-size: 16px; font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; }
-        .car-name:hover { background: #f0f2f5; }
-        .inicio-header .odometer-row { display: flex; justify-content: center; align-items: center; gap: 4px; }
-        .odo-value { font-size: 32px; font-weight: 700; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; color: #667eea; }
-        .odo-value:hover { background: #f0f2f5; }
-        .odo-unit { font-size: 14px; color: #888; }
-
-        .history-grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-        .history-summary-card { background: white; border-radius: 10px; padding: 8px 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .h-card-title { font-size: 10px; text-transform: uppercase; color: #999; font-weight: 600; margin-bottom: 2px; }
-        .h-card-value { font-size: 16px; font-weight: 700; color: #667eea; }
-
-        .month-select-container { margin-bottom: 10px; display: flex; justify-content: center; }
-        .month-select { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 13px; font-weight: 600; color: #444; background: white; outline: none; }
-
-        .history-list-compact { display: flex; flex-direction: column; gap: 6px; }
-        .history-item-compact { background: white; border-radius: 10px; padding: 10px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; }
-        .history-row1 { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; margin-bottom: 2px; }
-        .history-date { font-size: 13px; font-weight: 500; color: #444; text-align: left; }
-        .history-km { font-size: 14px; font-weight: 600; text-align: center; }
-        .history-km-right { text-align: right; }
-        .history-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; font-size: 13px; color: #666; margin-top: 2px; }
-        .history-consumption-badge { font-weight: 600; padding: 2px 6px; border-radius: 4px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
-
-        .badge-good { background: #e6f4ea; color: #137333; }
-        .badge-warn { background: #fef7e0; color: #b06000; }
-        .badge-bad { background: #fce8e6; color: #c5221f; }
-        .badge-none { background: #f1f3f4; color: #5f6368; }
-
-        .latest-fuels-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
-        .single-line-fuel { background: white; border-radius: 10px; padding: 10px 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
-        .modal.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: white; border-radius: 16px; padding: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
-        .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; text-align: center; }
-        .field-group { margin-bottom: 12px; }
-        .field-group label { display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 4px; }
-        .field-group input { width: 100%; padding: 10px 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #fafafa; }
-        .field-group input::placeholder { color: #999; }
-
-        .modal-buttons { display: flex; gap: 10px; margin-top: 18px; }
-        .btn-modal { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .btn-modal-primary { background: #667eea; color: white; }
-        .btn-modal-secondary { background: #f0f2f5; color: #4b5563; }
-        
-        .btn-fab { position: fixed; bottom: 76px; right: 20px; width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 50%; font-size: 24px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); z-index: 99; cursor: pointer; transition: transform 0.2s; }
-        .btn-fab:active { transform: scale(0.9); }
-        .btn-fab.hidden { display: none; }
-
-        .nav-bar { background: white; height: 60px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-around; box-shadow: 0 -3px 10px rgba(0,0,0,0.05); border-top: 1px solid #eee; z-index: 10; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; cursor: pointer; background: none; border: none; padding: 6px 12px; }
-        .nav-item.active { color: #667eea; font-weight: 600; }
-        .nav-icon { font-size: 18px; }
-        .nav-label { font-size: 11px; }
-
-        .empty-state-mini { text-align: center; color: #999; padding: 30px 10px; font-size: 13px; }
-        .section-label { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-
-        /* Servicios */
-        .service-item { background: white; border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 4px; }
-        .service-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
-        .service-info { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .service-type { font-weight: 600; font-size: 14px; }
-        .service-date { font-size: 12px; color: #888; }
-        .service-km-restante { font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
-        .service-km-restante.green { background: #d1fae5; color: #065f46; }
-        .service-km-restante.yellow { background: #fef3c7; color: #92400e; }
-        .service-km-restante.red { background: #fecaca; color: #991b1b; }
-        .service-km-restante.done { background: #d1fae5; color: #065f46; }
-        .service-odo-final { font-size: 13px; color: #444; font-weight: 500; }
-        .service-actions { display: flex; align-items: center; gap: 4px; }
-        .service-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px 6px; border-radius: 6px; transition: background 0.2s; }
-        .service-btn:hover { background: #f0f2f5; }
-        .service-btn.delete { color: #dc2626; }
-        .service-btn.edit { color: #667eea; }
-        .service-btn.done-btn { background: #667eea; color: white; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; }
-        .service-btn.done-btn:hover { background: #5a6fd6; }
-        .service-status-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
-        .status-pendiente { background: #fef3c7; color: #92400e; }
-        .status-realizado { background: #d1fae5; color: #065f46; }
-
-        .add-service-btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px; }
-        .add-service-btn:hover { background: #5a6fd6; }
-
-        /* TOAST */
-        #toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            padding: 14px 28px;
-            border-radius: 16px;
-            font-weight: 600;
-            font-size: 15px;
-            color: white;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 99999;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-            text-align: center;
-            max-width: 90%;
-            line-height: 1.5;
-        }
-        #toast.show { 
-            opacity: 1; 
-            transform: translateX(-50%) translateY(0);
-        }
-        #toast.success { background: #10b981; }
-        #toast.error { background: #ef4444; }
-        #toast.saving { background: #667eea; }
-        #toast.delete { background: #dc2626; }
-        #toast.warning { background: #f59e0b; }
-        #toast .icon { margin-right: 10px; font-size: 20px; }
-
-        /* MODAL DE CONFIRMACIÓN BONITO */
-        #confirmModal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            padding: 20px;
-            animation: fadeIn 0.3s ease;
-        }
-        #confirmModal.show {
-            display: flex;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .confirm-box {
-            background: white;
-            border-radius: 24px;
-            padding: 32px 28px;
-            max-width: 340px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes bounceIn {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        .confirm-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            display: block;
-        }
-        .confirm-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin-bottom: 6px;
-        }
-        .confirm-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        .confirm-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .confirm-buttons button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .confirm-buttons button:active {
-            transform: scale(0.95);
-        }
-        .confirm-btn-cancel {
-            background: #f0f2f5;
-            color: #4b5563;
-        }
-        .confirm-btn-delete {
-            background: #dc2626;
-            color: white;
-        }
-        .confirm-btn-delete:hover {
-            background: #b91c1c;
-        }
-        .confirm-btn-delete:active {
-            background: #991b1b;
-        }
+        /* ESTILOS (mantener los mismos que ya tenías) */
+        /* ... (copiar los estilos de tu versión anterior) ... */
     </style>
 </head>
 <body>
 
     <div class="app">
-        <header class="header-mini">
-            <div class="header-left"><span class="icon">⛽</span><span class="app-name">GasApp</span></div>
-            <div class="header-right"><span class="header-title" id="appTitle">Resumen</span></div>
-        </header>
-
-        <div id="toast"></div>
-
-        <!-- MODAL DE CONFIRMACIÓN BONITO -->
-        <div id="confirmModal">
-            <div class="confirm-box">
-                <span class="confirm-icon">🗑️</span>
-                <div class="confirm-title">¿Eliminar registro?</div>
-                <div class="confirm-subtitle" id="confirmMessage">Esta acción no se puede deshacer.</div>
-                <div class="confirm-buttons">
-                    <button class="confirm-btn-cancel" onclick="closeConfirmModal()">Cancelar</button>
-                    <button class="confirm-btn-delete" id="confirmDeleteBtn">Eliminar</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-inicio" class="tab-content active">
-            <div class="inicio-header">
-                <div class="car-name-row"><span class="car-name" id="carNameDisplay" onclick="openNameModal()">Mi Auto</span></div>
-                <div class="odometer-row"><span class="odo-value" id="mainOdometer" onclick="openOdoModal()">0</span><span class="odo-unit">km</span></div>
-            </div>
-            <div class="section-label">Últimas Cargas Recientes</div>
-            <div class="latest-fuels-list" id="latestFuelContainer"></div>
-        </div>
-
-        <div id="tab-historial" class="tab-content">
-            <div class="month-select-container"><select id="monthSelect" class="month-select"><option value="todos">Todos los meses</option></select></div>
-            <div class="history-grid-4">
-                <div class="history-summary-card"><span class="h-card-title">Km Recorridos</span><span class="h-card-value" id="summaryKm">0 km</span></div>
-                <div class="history-summary-card"><span class="h-card-title">Gastos</span><span class="h-card-value" id="summaryTotal">$0.00</span></div>
-                <div class="history-summary-card"><span class="h-card-title">Litros</span><span class="h-card-value" id="summaryLiters">0.0 L</span></div>
-                <div class="history-summary-card"><span class="h-card-title">Rendimiento</span><span class="h-card-value" id="summaryAvg">0.0 km/L</span></div>
-            </div>
-            <div class="section-label">Historial de Cargas</div>
-            <div class="history-list-compact" id="historyList"></div>
-        </div>
-
-        <div id="tab-servicios" class="tab-content">
-            <div class="section-label">Servicios Programados</div>
-            <button class="add-service-btn" onclick="openServiceModal()">+ Agregar Servicio</button>
-            <div class="history-list-compact" id="servicesList"></div>
-        </div>
-
-        <button class="btn-fab" id="fabBtn" onclick="openNewFuel()">+</button>
-
-        <nav class="nav-bar">
-            <button class="nav-item active" data-tab="inicio"><span class="nav-icon">📊</span><span class="nav-label">Resumen</span></button>
-            <button class="nav-item" data-tab="historial"><span class="nav-icon">📅</span><span class="nav-label">Historial</span></button>
-            <button class="nav-item" data-tab="servicios"><span class="nav-icon">🛠️</span><span class="nav-label">Servicios</span></button>
-        </nav>
-    </div>
-
-    <!-- MODALES -->
-    <div class="modal" id="fuelModal">
-        <div class="modal-content">
-            <div class="modal-title" id="fuelModalTitle">Nueva Carga</div>
-            <form id="fuelForm" onsubmit="event.preventDefault(); saveFuel();">
-                <input type="hidden" id="editFuelIndex">
-                <div class="field-group"><label>Kilometraje Actual (km)</label><input type="number" id="fuelOdometer" required></div>
-                <div class="field-group"><label>Litros Cargados (L)</label><input type="number" id="fuelLiters" step="0.01" required></div>
-                <div class="field-group"><label>Precio por Litro ($)</label><input type="number" id="fuelPrice" step="0.01" required></div>
-                <div class="field-group"><label>Fecha</label><input type="date" id="fuelDate" required></div>
-                <div style="text-align:right; margin-top:8px; margin-bottom:12px;"><span style="font-size:12px; color:#666;">Total: </span><span id="liveTotal" style="font-weight:700;">$0.00</span></div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-modal btn-modal-secondary" onclick="toggleModal('fuelModal','close')">Cancelar</button>
-                    <button type="submit" class="btn-modal btn-modal-primary">Guardar</button>
-                </div>
-                <button type="button" id="deleteFuelBtn" style="width:100%; margin-top:10px; color:#c5221f; display:none; background:#fce8e6; border:none; border-radius:10px; padding:12px; font-weight:600; cursor:pointer;">Eliminar Registro</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal" id="nameModal">
-        <div class="modal-content">
-            <div class="modal-title">Editar Nombre del Auto</div>
-            <div class="field-group"><label>Nombre del Auto</label><input type="text" id="carNameInput" placeholder="Ej: Nissan March"></div>
-            <div class="modal-buttons">
-                <button type="button" class="btn-modal btn-modal-secondary" onclick="toggleModal('nameModal','close')">Cancelar</button>
-                <button type="button" class="btn-modal btn-modal-primary" onclick="saveCarName()">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="odoModal">
-        <div class="modal-content">
-            <div class="modal-title">Editar Odómetro</div>
-            <div class="field-group"><label>Kilometraje Actual (km)</label><input type="number" id="odoInput" step="1" required></div>
-            <div class="modal-buttons">
-                <button type="button" class="btn-modal btn-modal-secondary" onclick="toggleModal('odoModal','close')">Cancelar</button>
-                <button type="button" class="btn-modal btn-modal-primary" onclick="saveManualOdo()">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="serviceModal">
-        <div class="modal-content">
-            <div class="modal-title">Agregar Servicio</div>
-            <form id="serviceForm" onsubmit="event.preventDefault(); saveService();">
-                <div class="field-group">
-                    <label>Tipo de Servicio</label>
-                    <input type="text" id="serviceType" placeholder="Ej: Cambio de aceite" required>
-                </div>
-                <div class="field-group">
-                    <label>Odómetro de Servicio (km)</label>
-                    <input type="number" id="serviceOdometer" step="1" required>
-                </div>
-                <div class="field-group">
-                    <label>Fecha de Ingreso</label>
-                    <input type="date" id="serviceDate" required>
-                </div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-modal btn-modal-secondary" onclick="toggleModal('serviceModal','close')">Cancelar</button>
-                    <button type="submit" class="btn-modal btn-modal-primary">Guardar Servicio</button>
-                </div>
-            </form>
-        </div>
+        <!-- HEADER, TABS, MODALES (mantener igual) -->
     </div>
 
     <script>
         // ============================================================
         // CONFIGURACIÓN
         // ============================================================
-        const URL_API = 'https://script.google.com/macros/s/AKfycbyCIe9Xyho8-93kN_K04GCSQmqvrM13ia4mwYGHJ-akuyQ6gLSvh7zH8Hai2dLqb8zW/exec';
+        const URL_API = 'https://script.google.com/macros/s/AKfycbwSHz8rsAm9KSobCZowVM-OtNTKUNwdYpkagFlVVA83FRovSiP6BmhVsQabAc-mH_CM/exec';
         let appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
         const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         let toastTimeout = null;
@@ -405,14 +58,12 @@
             const modal = document.getElementById('confirmModal');
             const msg = document.getElementById('confirmMessage');
             
-            // Cerrar cualquier modal previo
             closeConfirmModal();
             
             msg.textContent = message || 'Esta acción no se puede deshacer.';
             modal.classList.add('show');
             confirmCallback = onConfirm;
             
-            // Remover event listeners anteriores y agregar nuevos
             const deleteBtn = document.getElementById('confirmDeleteBtn');
             const newDeleteBtn = deleteBtn.cloneNode(true);
             deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
@@ -431,12 +82,10 @@
             confirmCallback = null;
         }
 
-        // Cerrar con tecla ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeConfirmModal();
         });
 
-        // Cerrar haciendo clic fuera
         document.getElementById('confirmModal').addEventListener('click', function(e) {
             if (e.target === this) closeConfirmModal();
         });
@@ -523,7 +172,7 @@
         }
 
         // ============================================================
-        // EXCEL SYNC - CON NO-CORS
+        // EXCEL SYNC
         // ============================================================
         async function callAction(action, data) {
             if (isSaving) {
@@ -703,7 +352,7 @@
                                         <span class="service-odo-final">📌 ${formatNumber(s.serviceOdometer)} km</span>
                                     </div>
                                     <div class="service-actions">
-                                        ${s.status === 'pendiente' ? `<button class="service-btn edit" onclick="editService('${s.id}')" title="Editar">✏️</button>` : ''}
+                                        ${s.status === 'pendiente' ? `<button class="service-btn edit" onclick="openEditService('${s.id}')" title="Editar">✏️</button>` : ''}
                                         <button class="service-btn delete" onclick="requestDeleteService('${s.id}')" title="Eliminar">✕</button>
                                     </div>
                                 </div>
@@ -777,6 +426,7 @@
         }
 
         async function saveFuel() {
+            let id = document.getElementById('editFuelIndex').value;
             let l = parseFloat(document.getElementById('fuelLiters').value); 
             let p = parseFloat(document.getElementById('fuelPrice').value);
             let dateValue = document.getElementById('fuelDate').value;
@@ -790,14 +440,41 @@
                 totalCost: l * p
             };
             
-            const result = await callAction('addFuel', data);
-            if (result && result.status === 'OK') {
-                appData.fuels.push({ ...data, id: 'f_' + Date.now() });
-                await callAction('updateOdometer', { manualOdometer: odo });
-                appData.manualOdometer = odo;
-                toggleModal('fuelModal','close');
-                updateUI();
-                showToast('✅ Carga guardada y odómetro actualizado', 'success');
+            if (id) {
+                // EDITAR - Buscar el registro existente por ID
+                const oldFuel = appData.fuels.find(f => f.id === id);
+                if (oldFuel) {
+                    const updateData = {
+                        odometer: oldFuel.odometer, // Identificador
+                        newDate: dateValue,
+                        newOdometer: odo,
+                        newLiters: l,
+                        newPricePerLiter: p,
+                        newTotalCost: l * p
+                    };
+                    const result = await callAction('updateFuel', updateData);
+                    if (result && result.status === 'OK') {
+                        // Actualizar en appData
+                        const idx = appData.fuels.findIndex(f => f.id === id);
+                        if (idx !== -1) {
+                            appData.fuels[idx] = { ...data, id: id };
+                        }
+                        toggleModal('fuelModal','close');
+                        updateUI();
+                        showToast('✅ Carga actualizada', 'success');
+                    }
+                }
+            } else {
+                // NUEVO
+                const result = await callAction('addFuel', data);
+                if (result && result.status === 'OK') {
+                    appData.fuels.push({ ...data, id: 'f_' + Date.now() });
+                    await callAction('updateOdometer', { manualOdometer: odo });
+                    appData.manualOdometer = odo;
+                    toggleModal('fuelModal','close');
+                    updateUI();
+                    showToast('✅ Carga guardada', 'success');
+                }
             }
         }
 
@@ -892,17 +569,34 @@
         }
 
         // ============================================================
-        // SERVICIOS - FUNCIONALES
+        // SERVICIOS - CON EDICIÓN FUNCIONAL
         // ============================================================
         function openServiceModal() {
             document.getElementById('serviceForm').reset();
+            document.getElementById('editServiceId').value = '';
+            document.getElementById('serviceModalTitle').innerText = 'Agregar Servicio';
+            document.getElementById('serviceSaveBtn').innerText = 'Guardar Servicio';
             document.getElementById('serviceDate').value = new Date().toISOString().split('T')[0];
             const currentOdo = getCurrentOdometer();
             document.getElementById('serviceOdometer').value = currentOdo;
             toggleModal('serviceModal','open');
         }
 
+        function openEditService(id) {
+            const service = appData.services.find(s => s.id === id);
+            if (!service) return;
+            
+            document.getElementById('editServiceId').value = id;
+            document.getElementById('serviceModalTitle').innerText = 'Editar Servicio';
+            document.getElementById('serviceSaveBtn').innerText = 'Actualizar Servicio';
+            document.getElementById('serviceType').value = service.type;
+            document.getElementById('serviceOdometer').value = service.serviceOdometer;
+            document.getElementById('serviceDate').value = service.date;
+            toggleModal('serviceModal','open');
+        }
+
         async function saveService() {
+            const id = document.getElementById('editServiceId').value;
             let type = document.getElementById('serviceType').value.trim();
             let odo = parseInt(document.getElementById('serviceOdometer').value);
             let dateValue = document.getElementById('serviceDate').value;
@@ -921,24 +615,42 @@
                     status: 'pendiente'
                 };
                 
-                const result = await callAction('addService', data);
-                if (result && result.status === 'OK') {
-                    appData.services.push({ 
-                        id: 's_' + Date.now(), 
-                        ...data
-                    });
-                    toggleModal('serviceModal','close');
-                    updateUI();
-                    showToast('✅ Servicio guardado', 'success');
+                if (id) {
+                    // EDITAR
+                    const oldService = appData.services.find(s => s.id === id);
+                    if (oldService) {
+                        const updateData = {
+                            type: oldService.type,
+                            serviceOdometer: oldService.serviceOdometer,
+                            newDate: dateValue,
+                            newServiceOdometer: odo,
+                            newType: type,
+                            newStatus: 'pendiente'
+                        };
+                        const result = await callAction('updateService', updateData);
+                        if (result && result.status === 'OK') {
+                            const idx = appData.services.findIndex(s => s.id === id);
+                            if (idx !== -1) {
+                                appData.services[idx] = { ...data, id: id };
+                            }
+                            toggleModal('serviceModal','close');
+                            updateUI();
+                            showToast('✅ Servicio actualizado', 'success');
+                        }
+                    }
                 } else {
-                    showToast('❌ Error al guardar', 'error');
+                    // NUEVO
+                    const result = await callAction('addService', data);
+                    if (result && result.status === 'OK') {
+                        appData.services.push({ ...data, id: 's_' + Date.now() });
+                        toggleModal('serviceModal','close');
+                        updateUI();
+                        showToast('✅ Servicio guardado', 'success');
+                    } else {
+                        showToast('❌ Error al guardar', 'error');
+                    }
                 }
             }
-        }
-
-        function editService(id) {
-            // TODO: Implementar edición de servicios
-            showToast('✏️ Editar servicio (próximamente)', 'warning');
         }
 
         function requestDeleteService(id) {

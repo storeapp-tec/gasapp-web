@@ -148,6 +148,96 @@
         #toast.delete { background: #dc2626; }
         #toast.warning { background: #f59e0b; }
         #toast .icon { margin-right: 10px; font-size: 20px; }
+
+        /* MODAL DE CONFIRMACIÓN BONITO */
+        #confirmModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99998;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        #confirmModal.show {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .confirm-box {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 28px;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .confirm-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .confirm-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+        .confirm-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .confirm-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-buttons button:active {
+            transform: scale(0.95);
+        }
+        .confirm-btn-cancel {
+            background: #f0f2f5;
+            color: #4b5563;
+        }
+        .confirm-btn-cancel:hover {
+            background: #e5e7eb;
+        }
+        .confirm-btn-delete {
+            background: #dc2626;
+            color: white;
+        }
+        .confirm-btn-delete:hover {
+            background: #b91c1c;
+        }
+        .confirm-btn-delete:active {
+            background: #991b1b;
+        }
     </style>
 </head>
 <body>
@@ -159,6 +249,19 @@
         </header>
 
         <div id="toast"></div>
+
+        <!-- MODAL DE CONFIRMACIÓN BONITO -->
+        <div id="confirmModal">
+            <div class="confirm-box">
+                <span class="confirm-icon">🗑️</span>
+                <div class="confirm-title">¿Eliminar registro?</div>
+                <div class="confirm-subtitle" id="confirmMessage">Esta acción no se puede deshacer.</div>
+                <div class="confirm-buttons">
+                    <button class="confirm-btn-cancel" onclick="closeConfirmModal()">Cancelar</button>
+                    <button class="confirm-btn-delete" id="confirmDeleteBtn">Eliminar</button>
+                </div>
+            </div>
+        </div>
 
         <div id="tab-inicio" class="tab-content active">
             <div class="inicio-header">
@@ -266,21 +369,20 @@
         // ============================================================
         // CONFIGURACIÓN
         // ============================================================
-        const URL_API = 'https://script.google.com/macros/s/AKfycbyH4_1GAU-suBZi_Lz0luOp-EHoSttkMI4_yoszsgPFUBKVIaaAPsRlk7vvUpTMdBce/exec';
+        const URL_API = 'https://script.google.com/macros/s/AKfycbyCIe9Xyho8-93kN_K04GCSQmqvrM13ia4mwYGHJ-akuyQ6gLSvh7zH8Hai2dLqb8zW/exec';
         let appData = { carName: 'Mi Auto', manualOdometer: null, fuels: [], services: [] };
         const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         let toastTimeout = null;
         let isSaving = false;
+        let pendingDeleteAction = null;
 
         // ============================================================
         // TOAST MEJORADO
         // ============================================================
         function showToast(message, type = 'success', duration = 2500) {
             const toast = document.getElementById('toast');
-            // Limpiar timeout anterior
             clearTimeout(toastTimeout);
             
-            // Construir el mensaje con icono
             let icon = '';
             switch(type) {
                 case 'success': icon = '✅'; break;
@@ -294,10 +396,39 @@
             toast.innerHTML = `<span class="icon">${icon}</span> ${message}`;
             toast.className = type + ' show';
             
-            // Ocultar después de la duración especificada
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('show');
             }, duration);
+        }
+
+        // ============================================================
+        // MODAL DE CONFIRMACIÓN BONITO
+        // ============================================================
+        function showConfirmModal(message, onConfirm) {
+            const modal = document.getElementById('confirmModal');
+            const msg = document.getElementById('confirmMessage');
+            const btn = document.getElementById('confirmDeleteBtn');
+            
+            msg.textContent = message || 'Esta acción no se puede deshacer.';
+            modal.classList.add('show');
+            
+            // Remover eventos anteriores
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', function() {
+                closeConfirmModal();
+                if (onConfirm) onConfirm();
+            });
+            
+            // Cerrar con tecla ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeConfirmModal();
+            });
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('show');
         }
 
         // ============================================================
@@ -563,7 +694,7 @@
                                     </div>
                                     <div class="service-actions">
                                         ${s.status === 'pendiente' ? `<button class="service-btn edit" onclick="editService('${s.id}')" title="Editar">✏️</button>` : ''}
-                                        <button class="service-btn delete" onclick="deleteService('${s.id}')" title="Eliminar">✕</button>
+                                        <button class="service-btn delete" onclick="requestDeleteService('${s.id}')" title="Eliminar">✕</button>
                                     </div>
                                 </div>
                                 ${s.status === 'pendiente' ? 
@@ -671,26 +802,28 @@
             toggleModal('fuelModal','open');
         }
 
-        document.getElementById('deleteFuelBtn').onclick = async () => { 
-            if(confirm('⚠️ ¿Estás seguro de eliminar este registro?')) { 
-                const id = document.getElementById('editFuelIndex').value;
-                const fuel = appData.fuels.find(f => f.id === id);
-                if (fuel) {
-                    // Usar el odómetro como identificador (más confiable que la fecha)
-                    const result = await callAction('deleteFuel', {
-                        date: formatDateForExcel(fuel.date),
-                        odometer: fuel.odometer
-                    });
-                    if (result && result.status === 'OK') {
-                        appData.fuels = appData.fuels.filter(f => f.id !== id);
-                        toggleModal('fuelModal','close');
-                        updateUI();
-                        showToast('🗑️ Registro eliminado correctamente', 'delete');
-                    } else {
-                        showToast('❌ Error al eliminar: ' + (result?.mensaje || 'desconocido'), 'error');
+        document.getElementById('deleteFuelBtn').onclick = function() {
+            const id = document.getElementById('editFuelIndex').value;
+            const fuel = appData.fuels.find(f => f.id === id);
+            if (fuel) {
+                showConfirmModal(
+                    `¿Eliminar la carga del ${formatDateShort(fuel.date)} con ${fuel.liters}L?`,
+                    async function() {
+                        const result = await callAction('deleteFuel', {
+                            date: formatDateForExcel(fuel.date),
+                            odometer: fuel.odometer
+                        });
+                        if (result && result.status === 'OK') {
+                            appData.fuels = appData.fuels.filter(f => f.id !== id);
+                            toggleModal('fuelModal','close');
+                            updateUI();
+                            showToast('🗑️ Registro eliminado correctamente', 'delete');
+                        } else {
+                            showToast('❌ Error al eliminar', 'error');
+                        }
                     }
-                }
-            } 
+                );
+            }
         };
 
         document.getElementById('fuelLiters').oninput = document.getElementById('fuelPrice').oninput = function() {
@@ -794,42 +927,48 @@
             showToast('✏️ Editar servicio (próximamente)', 'warning');
         }
 
-        async function markServiceDone(id) {
-            if (confirm('✅ ¿Marcar este servicio como REALIZADO?')) {
-                const service = appData.services.find(s => s.id === id);
-                if (service) {
-                    const result = await callAction('markServiceDone', {
-                        type: service.type,
-                        serviceOdometer: service.serviceOdometer
-                    });
-                    if (result && result.status === 'OK') {
-                        service.status = 'realizado';
-                        updateUI();
-                        showToast('✅ Servicio marcado como realizado', 'success');
-                    } else {
-                        showToast('❌ Error al actualizar', 'error');
+        function requestDeleteService(id) {
+            const service = appData.services.find(s => s.id === id);
+            if (service) {
+                showConfirmModal(
+                    `¿Eliminar el servicio "${service.type}" programado a ${formatNumber(service.serviceOdometer)} km?`,
+                    async function() {
+                        const result = await callAction('deleteService', {
+                            type: service.type,
+                            serviceOdometer: service.serviceOdometer
+                        });
+                        if (result && result.status === 'OK') {
+                            appData.services = appData.services.filter(s => s.id !== id);
+                            updateUI();
+                            showToast('🗑️ Servicio eliminado correctamente', 'delete');
+                        } else {
+                            showToast('❌ Error al eliminar', 'error');
+                        }
                     }
-                }
+                );
             }
         }
 
-        async function deleteService(id) { 
-            if(confirm('⚠️ ¿Estás seguro de eliminar este servicio?')) { 
-                const service = appData.services.find(s => s.id === id);
-                if (service) {
-                    const result = await callAction('deleteService', {
-                        type: service.type,
-                        serviceOdometer: service.serviceOdometer
-                    });
-                    if (result && result.status === 'OK') {
-                        appData.services = appData.services.filter(s => s.id !== id);
-                        updateUI();
-                        showToast('🗑️ Servicio eliminado correctamente', 'delete');
-                    } else {
-                        showToast('❌ Error al eliminar', 'error');
+        async function markServiceDone(id) {
+            const service = appData.services.find(s => s.id === id);
+            if (service) {
+                showConfirmModal(
+                    `¿Marcar "${service.type}" como REALIZADO?`,
+                    async function() {
+                        const result = await callAction('markServiceDone', {
+                            type: service.type,
+                            serviceOdometer: service.serviceOdometer
+                        });
+                        if (result && result.status === 'OK') {
+                            service.status = 'realizado';
+                            updateUI();
+                            showToast('✅ Servicio marcado como realizado', 'success');
+                        } else {
+                            showToast('❌ Error al actualizar', 'error');
+                        }
                     }
-                }
-            } 
+                );
+            }
         }
 
         // ============================================================

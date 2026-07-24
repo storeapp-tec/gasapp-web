@@ -92,70 +92,81 @@
         .empty-state-mini { text-align: center; color: #999; padding: 30px 10px; font-size: 13px; }
         .section-label { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 
-        /* ===== SERVICIOS - EN 2 LÍNEAS ===== */
+        /* ===== SERVICIOS - FORZAR 2 LÍNEAS ===== */
         .service-item {
             background: white;
             border-radius: 10px;
             padding: 10px 14px;
             margin-bottom: 6px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
         .service-line1 {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
-            gap: 4px;
-            margin-bottom: 4px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px 8px;
+            width: 100%;
         }
         .service-line2 {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
-            gap: 4px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px 8px;
+            width: 100%;
             padding-top: 4px;
             border-top: 1px solid #f0f0f0;
         }
         .service-info-left {
             display: flex;
-            align-items: center;
-            gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 8px;
+            flex: 1;
+            min-width: 0;
         }
         .service-type {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
+            white-space: nowrap;
         }
         .service-date {
-            font-size: 12px;
+            font-size: 11px;
             color: #888;
+            white-space: nowrap;
         }
         .service-km-restante {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             padding: 2px 8px;
             border-radius: 10px;
+            white-space: nowrap;
         }
         .service-km-restante.green { background: #d1fae5; color: #065f46; }
         .service-km-restante.yellow { background: #fef3c7; color: #92400e; }
         .service-km-restante.red { background: #fecaca; color: #991b1b; }
         .service-km-restante.done { background: #d1fae5; color: #065f46; }
         .service-odo-final {
-            font-size: 13px;
+            font-size: 12px;
             color: #444;
             font-weight: 500;
+            white-space: nowrap;
         }
         .service-actions {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 2px;
+            flex-shrink: 0;
         }
         .service-btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             padding: 4px 6px;
             border-radius: 6px;
             transition: background 0.2s;
@@ -679,7 +690,7 @@
                     }).join('');
                 }
 
-                // SELECTOR DE MESES - SOLO DROPDOWN, NO MODAL
+                // SELECTOR DE MESES - SOLO DROPDOWN
                 const monthSelect = document.getElementById('monthSelect');
                 const selectedMonth = monthSelect.value || 'todos';
                 
@@ -783,7 +794,6 @@
 
                         return `
                             <div class="service-item">
-                                <!-- LÍNEA 1: Fecha | Tipo | KM restante | KM final -->
                                 <div class="service-line1">
                                     <div class="service-info-left">
                                         <span class="service-date">📅 ${formatDateShort(s.date)}</span>
@@ -796,7 +806,6 @@
                                         <button class="service-btn delete" onclick="requestDeleteService('${s.id}')" title="Eliminar">✕</button>
                                     </div>
                                 </div>
-                                <!-- LÍNEA 2: Botones de acción -->
                                 <div class="service-line2">
                                     ${s.status === 'pendiente' ? 
                                         `<button class="service-btn done-btn" onclick="requestMarkDone('${s.id}')">✅ Marcar realizado</button>

@@ -92,30 +92,129 @@
         .empty-state-mini { text-align: center; color: #999; padding: 30px 10px; font-size: 13px; }
         .section-label { font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 
-        .service-item { background: white; border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 4px; }
-        .service-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
-        .service-info { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .service-type { font-weight: 600; font-size: 14px; }
-        .service-date { font-size: 12px; color: #888; }
-        .service-km-restante { font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+        /* ===== SERVICIOS - NUEVO DISEÑO ===== */
+        .service-item {
+            background: white;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .service-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        .service-type {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .service-date {
+            font-size: 12px;
+            color: #888;
+        }
+        .service-km-restante {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
         .service-km-restante.green { background: #d1fae5; color: #065f46; }
         .service-km-restante.yellow { background: #fef3c7; color: #92400e; }
         .service-km-restante.red { background: #fecaca; color: #991b1b; }
         .service-km-restante.done { background: #d1fae5; color: #065f46; }
-        .service-odo-final { font-size: 13px; color: #444; font-weight: 500; }
-        .service-actions { display: flex; align-items: center; gap: 4px; }
-        .service-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px 6px; border-radius: 6px; transition: background 0.2s; }
+        .service-odo-final {
+            font-size: 13px;
+            color: #444;
+            font-weight: 500;
+        }
+        .service-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .service-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
         .service-btn:hover { background: #f0f2f5; }
         .service-btn.delete { color: #dc2626; }
         .service-btn.edit { color: #667eea; }
-        .service-btn.done-btn { background: #667eea; color: white; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; }
+        .service-btn.done-btn {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
         .service-btn.done-btn:hover { background: #5a6fd6; }
-        .service-status-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+        .service-status-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
         .status-pendiente { background: #fef3c7; color: #92400e; }
         .status-realizado { background: #d1fae5; color: #065f46; }
 
-        .add-service-btn { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px; }
+        .add-service-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
         .add-service-btn:hover { background: #5a6fd6; }
+
+        /* FILTRO DE SERVICIOS (Pendientes/Realizados) */
+        .service-filter {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .service-filter button {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .service-filter button.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        .service-filter button:hover {
+            border-color: #667eea;
+        }
 
         #toast {
             position: fixed;
@@ -233,6 +332,14 @@
         <div id="tab-servicios" class="tab-content">
             <div class="section-label">Servicios Programados</div>
             <button class="add-service-btn" onclick="openServiceModal()">+ Agregar Servicio</button>
+            
+            <!-- FILTRO DE SERVICIOS -->
+            <div class="service-filter">
+                <button class="active" data-filter="todos" onclick="setServiceFilter('todos')">Todos</button>
+                <button data-filter="pendiente" onclick="setServiceFilter('pendiente')">⏳ Pendientes</button>
+                <button data-filter="realizado" onclick="setServiceFilter('realizado')">✅ Realizados</button>
+            </div>
+            
             <div class="history-list-compact" id="servicesList"></div>
         </div>
 
@@ -322,6 +429,7 @@
         let toastTimeout = null;
         let isSaving = false;
         let confirmCallback = null;
+        let currentServiceFilter = 'todos';
 
         // ============================================================
         // TOAST
@@ -536,6 +644,17 @@
         }
 
         // ============================================================
+        // SET SERVICE FILTER
+        // ============================================================
+        function setServiceFilter(filter) {
+            currentServiceFilter = filter;
+            document.querySelectorAll('.service-filter button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            updateUI();
+        }
+
+        // ============================================================
         // UPDATE UI
         // ============================================================
         function updateUI() {
@@ -632,23 +751,29 @@
                     }).join('');
                 }
 
-                // SERVICIOS
+                // ===== SERVICIOS CON FILTRO =====
                 const services = appData.services || [];
                 const slist = document.getElementById('servicesList');
-                if (services.length === 0) {
-                    slist.innerHTML = `<div class="empty-state-mini">No hay servicios programados</div>`;
+                
+                // Aplicar filtro de estado
+                let filteredServices = services;
+                if (currentServiceFilter === 'pendiente') {
+                    filteredServices = services.filter(s => s.status === 'pendiente');
+                } else if (currentServiceFilter === 'realizado') {
+                    filteredServices = services.filter(s => s.status === 'realizado');
+                }
+
+                if (filteredServices.length === 0) {
+                    slist.innerHTML = `<div class="empty-state-mini">No hay servicios ${currentServiceFilter === 'todos' ? 'programados' : currentServiceFilter === 'pendiente' ? 'pendientes' : 'realizados'}</div>`;
                 } else {
                     const currentOdo = getCurrentOdometer();
-                    const sortedServices = [...services].sort((a, b) => {
+                    const sortedServices = [...filteredServices].sort((a, b) => {
                         if (a.status === 'pendiente' && b.status !== 'pendiente') return -1;
                         if (a.status !== 'pendiente' && b.status === 'pendiente') return 1;
                         return a.serviceOdometer - b.serviceOdometer;
                     });
 
-                    let pendientesHtml = '';
-                    let realizadosHtml = '';
-
-                    sortedServices.forEach(s => {
+                    slist.innerHTML = sortedServices.map(s => {
                         const diff = s.serviceOdometer - currentOdo;
                         let kmClass, kmDisplay;
 
@@ -661,7 +786,7 @@
                             else { kmClass = 'red'; kmDisplay = diff > 0 ? `🔴 ${formatNumber(diff)} km` : '🔴 VENCIDO'; }
                         }
 
-                        const itemHtml = `
+                        return `
                             <div class="service-item">
                                 <div class="service-row">
                                     <div class="service-info">
@@ -675,26 +800,16 @@
                                         <button class="service-btn delete" onclick="requestDeleteService('${s.id}')" title="Eliminar">✕</button>
                                     </div>
                                 </div>
-                                ${s.status === 'pendiente' ? 
-                                    `<div class="service-row" style="margin-top:4px;">
-                                        <button class="service-btn done-btn" onclick="requestMarkDone('${s.id}')">✅ Marcar realizado</button>
-                                        <span class="service-status-badge status-pendiente">⏳ Pendiente</span>
-                                    </div>` :
-                                    `<div class="service-row" style="margin-top:4px;">
-                                        <span class="service-status-badge status-realizado">✅ Realizado</span>
-                                    </div>`
-                                }
+                                <div class="service-row" style="margin-top:4px;">
+                                    ${s.status === 'pendiente' ? 
+                                        `<button class="service-btn done-btn" onclick="requestMarkDone('${s.id}')">✅ Marcar realizado</button>
+                                         <span class="service-status-badge status-pendiente">⏳ Pendiente</span>` :
+                                        `<span class="service-status-badge status-realizado">✅ Realizado</span>`
+                                    }
+                                </div>
                             </div>
                         `;
-
-                        if (s.status === 'pendiente') pendientesHtml += itemHtml;
-                        else realizadosHtml += itemHtml;
-                    });
-
-                    let finalHtml = '';
-                    if (pendientesHtml) finalHtml += `<div style="font-size:12px; font-weight:600; color:#666; margin-bottom:6px; margin-top:4px;">📌 Pendientes</div>${pendientesHtml}`;
-                    if (realizadosHtml) finalHtml += `<div style="font-size:12px; font-weight:600; color:#666; margin-bottom:6px; margin-top:12px;">✅ Realizados</div>${realizadosHtml}`;
-                    slist.innerHTML = finalHtml;
+                    }).join('');
                 }
 
                 // FAB
